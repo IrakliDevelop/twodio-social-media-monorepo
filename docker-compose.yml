@@ -1,0 +1,40 @@
+version: '3'
+services:
+  api:
+    build: ./api
+    ports:
+      - 3000:3000
+  client:
+    build: ./twodio-social-media-front
+    ports:
+      - 80:80
+  graph-db:
+    image: tianon/true
+    restart: "no"
+    depends_on:
+      - dgraph-zero
+      - dgraph-alpha
+      - dgraph-ratel
+  dgraph-zero:
+    image: dgraph/dgraph:latest
+    volumes:
+      - /tmp/data:/dgraph
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
+    command: dgraph zero --my=zero:5080
+  dgraph-alpha:
+    image: dgraph/dgraph:latest
+    volumes:
+      - /tmp/data:/dgraph
+    ports:
+      - 8070:8070
+      - 9080:9080
+    restart: on-failure
+    command: dgraph alpha --my=alpha:7080 --lru_mb=2048 --zero=zero:5080
+  dgraph-ratel:
+    image: dgraph/dgraph:latest
+    ports:
+      - 8000:8000
+    command: dgraph-ratel
