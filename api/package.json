@@ -6,7 +6,7 @@
   "scripts": {
     "build-ts": "tsc",
     "start": "npm run serve",
-    "serve": "node build/app.js",
+    "serve": "node dist/app.js",
     "watch-node": "nodemon dist/app.js",
     "watch-ts": "tsc -w"
   },
