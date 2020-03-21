@@ -2,6 +2,7 @@ export class CustomError extends Error {
     private details: any;
     private status: any;
     private code: any;
+    // @ts-ignore
     constructor({ message, status, code }) {
         super(message);
 
