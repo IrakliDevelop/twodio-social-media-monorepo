@@ -1,17 +1,17 @@
 export class CustomError extends Error {
-    private details: any;
-    private status: any;
-    private code: any;
-    // @ts-ignore
-    constructor({ message, status, code }) {
-        super(message);
+  private details: any;
+  private status: any;
+  private code: any;
+  // @ts-ignore
+  constructor({ message, status, code }) {
+    super(message);
 
-        this.details = message;
-        this.status = status;
-        this.code = code;
-        this.name = this.constructor.name;
+    this.details = message;
+    this.status = status;
+    this.code = code;
+    this.name = this.constructor.name;
 
-        Error.captureStackTrace(this, CustomError);
-    }
+    Error.captureStackTrace(this, CustomError);
+  }
 }
 

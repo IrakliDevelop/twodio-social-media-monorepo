@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 if (!config.isLambda) {
-    app.listen(config.server.port, () => console.log(`Api listening on port ${config.server.port}`));
+  app.listen(config.server.port, () => console.log(`Api listening on port ${config.server.port}`));
 }
 
 export = app;

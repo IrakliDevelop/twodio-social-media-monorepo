@@ -72,7 +72,23 @@
       true,
       "single"
     ],
-    "trailing-comma": false,
+    "indent": [
+      true, 
+      "spaces", 
+      2
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "singleline": "never",
+        "multiline": {
+          "objects": "always",
+          "arrays": "always",
+          "functions": "never",
+          "typeLiterals": "ignore"
+        }
+      }
+    ],
     "no-conflicting-lifecycle": true,
     "no-host-metadata-property": true,
     "no-input-rename": true,
