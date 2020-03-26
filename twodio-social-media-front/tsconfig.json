@@ -1,10 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
+    "baseUrl": "./src",
     "paths": {
       "@core/*": [
         "app/core/*"
@@ -13,6 +10,9 @@
         "app/shared/*"
       ]
     },
+    "outDir": "./dist",
+    "sourceMap": true,
+    "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "module": "esnext",
