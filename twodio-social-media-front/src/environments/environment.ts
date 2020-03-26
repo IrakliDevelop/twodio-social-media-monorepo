@@ -7,10 +7,10 @@ export const environment = {
   // TODO: add all credentials
   amplify: {
     Auth: {
-      identityPoolId: '',
+      identityPoolId: '634366997922',
       region: 'eu-west-1',
-      userPoolId: ' eu-west-1_DaMN9gJqG',
-      // userPoolWebClientId: '',
+      userPoolId: 'eu-west-1_DaMN9gJqG',
+      userPoolWebClientId: 'd26jcsmchv8mp6r2m6mppopmd',
     },
   },
 };
