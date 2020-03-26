@@ -1,2 +1,14 @@
 @import '~bootstrap/scss/bootstrap';
 @import "modules/signup";
+
+.error-message {
+  font-size: 18px;
+  text-align: center;
+  padding: 17px 10px;
+  color: #fff;
+  display: block;
+  position: relative;
+  z-index: 5;
+  border-radius: 4px;
+  background-color: #dc3545;
+}
