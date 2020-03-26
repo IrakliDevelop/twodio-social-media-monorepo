@@ -27,6 +27,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.signUpForm = this.fb.group({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      repeatPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
     });
   }
 
@@ -35,7 +36,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
       return;
       // TODO: handle validation
     }
-    const { email, password } = this.signUpForm.value;
+    const { email, password, repeatPassword } = this.signUpForm.value;
+    console.log(email, password, repeatPassword);
+    if (password !== repeatPassword) {
+      this.error$.next('passwords don\'t match');
+      return;
+    }
     this.authService.signUp(email, password ).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe(data => {

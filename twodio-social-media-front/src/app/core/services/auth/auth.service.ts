@@ -46,6 +46,7 @@ export class AuthService extends AuthData {
   }
 
   signUp(email, password): Observable<any> {
+    console.log(email, password);
     return from(Auth.signUp({
       username: email.toLowerCase(),
       password,
