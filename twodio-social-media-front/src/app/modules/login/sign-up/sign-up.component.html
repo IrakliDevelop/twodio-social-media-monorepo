@@ -1,19 +1,20 @@
+<ngx-loading [show]="loading"></ngx-loading>
 <div class="container">
-  <form [formGroup]="signUpForm" class="form-signup">
+  <form [formGroup]="signUpForm" class="form-signup" (ngSubmit)="onSignUp()">
     <div class="text-center">
       <h1 class="h3 mb-4">Sign Up!</h1>
     </div>
     <div class="full-width">
       <label for="inputEmail" class="sr-only">Email</label>
-      <input id="inputEmail" type="email" class="form-control mb-2" placeholder="email address" formControlName="email"/>
+      <input id="inputEmail" type="email" class="form-control mb-2" placeholder="email address" formControlName="email" required autofocus/>
     </div>
     <div class="full-width">
       <label for="inputPassword" class="sr-only">Password</label>
-      <input id="inputPassword" type="password"  class="form-control mb-2" placeholder="password" formControlName="password"/>
+      <input id="inputPassword" type="password"  class="form-control mb-2" placeholder="password" formControlName="password" required/>
     </div>
     <div class="full-width">
       <label for="inputPassword" class="sr-only">Repeat Password</label>
-      <input id="inputRepeatPassword" type="password"  class="form-control mb-2" placeholder="repeat password" formControlName="repeatPassword"/>
+      <input id="inputRepeatPassword" type="password"  class="form-control mb-2" placeholder="repeat password" formControlName="repeatPassword" required/>
     </div>
     <button class="full-width" mat-raised-button (click)="onSignUp()">Sign-Up</button>
     <p class="message">Already registered? <a style="cursor: pointer" routerLink="/login">Sign In</a></p>
@@ -28,7 +29,7 @@
 
       <button type="button" class="btn large-btn btn-clock" (click)="confirmClick()">Confirm</button>
     </div>
-    <div *ngIf="error$" class="error-message mb-2">
+    <div *ngIf="error$.getValue() !== null" class="error-message mb-2">
       {{this.error$.getValue()}}
     </div>
   </form>

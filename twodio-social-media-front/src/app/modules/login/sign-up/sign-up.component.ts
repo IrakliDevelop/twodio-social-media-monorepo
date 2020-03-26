@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {BehaviorSubject, Subject} from 'rxjs';
-import {finalize, first, takeUntil} from 'rxjs/operators';
+import {finalize, first, repeat, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
 
 import { AuthService } from '@core/services';
@@ -35,11 +35,15 @@ export class SignUpComponent implements OnInit, OnDestroy {
   }
 
   onSignUp(): void {
+    this.signUpForm.markAllAsTouched();
     if (!this.signUpForm.valid) {
+      console.log('invalid form');
+      this.error$.next('Please, fill out all fields');
       return;
       // TODO: handle validation
     }
     const { email, password, repeatPassword } = this.signUpForm.value;
+    console.log(email, password, repeatPassword);
     if (password !== repeatPassword) {
       this.error$.next('passwords don\'t match');
       return;
@@ -53,7 +57,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       this.emailConfirmationRequired = true;
     }, err => {
       console.error(err);
-      this.error$.next(err);
+      this.error$.next(err.message);
     });
   }
 
