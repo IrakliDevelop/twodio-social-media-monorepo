@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './material.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 const SHARED_MODULES = [
@@ -10,6 +11,7 @@ const SHARED_MODULES = [
   FormsModule,
   ReactiveFormsModule,
   NgbModule,
+  NgxLoadingModule,
 ];
 
 @NgModule({

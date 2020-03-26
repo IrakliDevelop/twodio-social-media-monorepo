@@ -27,6 +27,7 @@
     "aws-amplify-angular": "^4.1.7",
     "bootstrap": "^4.4.1",
     "hammerjs": "^2.0.8",
+    "ngx-loading": "^8.0.0",
     "ramda": "^0.27.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
