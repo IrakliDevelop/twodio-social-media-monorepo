@@ -15,8 +15,19 @@
       <label for="inputPassword" class="sr-only">Repeat Password</label>
       <input id="inputRepeatPassword" type="password"  class="form-control mb-2" placeholder="repeat password" formControlName="repeatPassword"/>
     </div>
-    <button class="full-width" mat-raised-button>Sign-Up</button>
+    <button class="full-width" mat-raised-button (click)="onSignUp()">Sign-Up</button>
     <p class="message">Already registered? <a style="cursor: pointer" routerLink="/login">Sign In</a></p>
+
+    <div *ngIf="emailConfirmationRequired">
+      <div class="text-center">
+        <h1 class="h5 mb-2">We've sent an email message containing a verification code</h1>
+      </div>
+
+      <label for="inputCode" class="sr-only">Code</label>
+      <input type="text" id="inputCode" name="code" formControlName="code" class="form-control mb-2" placeholder="Code">
+
+      <button type="button" class="btn large-btn btn-clock" (click)="confirmClick()">Confirm</button>
+    </div>
     <div *ngIf="error$" class="error-message mb-2">
       {{this.error$.getValue()}}
     </div>
