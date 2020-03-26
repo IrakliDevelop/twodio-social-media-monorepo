@@ -1,4 +1,6 @@
 import {Observable} from 'rxjs';
+import {CognitoUser} from '@aws-amplify/auth';
+import {AmplifyService} from 'aws-amplify-angular';
 
 export interface IAuth {
   username?: string;
@@ -6,8 +8,10 @@ export interface IAuth {
 }
 
 export abstract class AuthData {
+  protected constructor(amplifyService: AmplifyService) {
+  }
   abstract isAuthenticated(): boolean;
-  abstract login(model: IAuth): Observable<any>;
-  abstract signOut(): void;
-  abstract getUserName(): string;
+  abstract signIn(email: string, password: string): Observable<CognitoUser>;
+  abstract signUp(email: string, password: string): Observable<any>;
+  abstract signOut(): Observable<any>;
 }

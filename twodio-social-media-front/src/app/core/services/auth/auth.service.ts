@@ -1,124 +1,117 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import * as ACI from 'amazon-cognito-identity-js';
+import { BehaviorSubject, from, Observable } from 'rxjs';
+import { AmplifyService } from 'aws-amplify-angular';
+import Amplify from '@aws-amplify/core';
+import { AuthState } from 'aws-amplify-angular/src/providers/auth.state';
+import Auth, { CognitoUser } from '@aws-amplify/auth';
+import * as R from 'ramda';
 
 import { environment } from '../../../../environments/environment';
-import {AuthData, IAuth} from '../../models';
+import {AuthData} from '../../models';
 
-type CognitoUserPoolWithStorage = ACI.CognitoUserPool & { storage: Storage };
+Amplify.configure(environment.amplify);
 
-const POOL_DATA = {
-  UserPoolId: environment.cognitoUserPoolId,
-  ClientId: environment.cognitoClientId,
+// tslint:disable-next-line:prefer-const
+let amplifyService: AmplifyService;
+
+const SESSION_INITIAL: AuthState = {
+  state: 'signedOut',
+  user: null,
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AuthService extends AuthData {
-  private cognitoUser: ACI.CognitoUser;
-  private session: ACI.CognitoUserSession;
-  private user: any;
-  private loading: boolean;
-
+  currentSession$: BehaviorSubject<AuthState> = new BehaviorSubject(SESSION_INITIAL);
+  amplifyService: AmplifyService;
   constructor() {
-    super();
-    this.user = {
-      username: 'unauthorized',
-      attributes: {},
-    };
-    this._reloadSession();
+    super(amplifyService);
+  }
+
+  async init(): Promise<any> {
+    this.amplifyService.authState().subscribe(e => this.currentSession$.next(e));
+    try {
+      await Auth.currentSession();
+    } catch (err) {
+      console.warn(err);
+    }
+    return Promise.resolve(null);
+  }
+
+  signIn(email, password): Observable<CognitoUser> {
+    return from(Auth.signIn(email.toLowerCase(), password));
+  }
+
+  signOut(): Observable<any> {
+    return from(Auth.signOut());
+  }
+
+  signUp(email, password): Observable<any> {
+    return from(Auth.signUp({
+      username: email.toLowerCase(),
+      password,
+    }));
+  }
+
+  confirmSignUp(email: string, code: string): Observable<any> {
+    return from(Auth.confirmSignUp(email.toLowerCase(), code));
+  }
+
+  resendSignUp(email: string): Observable<any> {
+    return from(Auth.resendSignUp(email.toLowerCase()));
+  }
+
+  changePassword(oldPassword: string, newPassword: string): Promise<any> {
+    return Auth.currentAuthenticatedUser()
+      .then(user => {
+        return Auth.changePassword(user, oldPassword, newPassword);
+      });
+  }
+
+  forgetPassword(email: string): Promise<any> {
+    return Auth.forgotPassword(email.toLowerCase());
+  }
+
+  forgotPasswordSubmit(email, code, newPassword): Promise<any> {
+    return Auth.forgotPasswordSubmit(email.toLowerCase(), code, newPassword);
+  }
+
+  getAuthorizationToken(): string {
+    if (!this.isAuthenticated()) {
+      return '';
+    }
+    return this.currentSession$.getValue().user.signInUserSession.idToken.jwtToken;
   }
 
   isAuthenticated(): boolean {
-    if (!this.loading && !!this.cognitoUser && !!this.session && !this.session.isValid()) {
-      console.log('reload auth service');
-      this.loading = true;
-      this._reloadSession();
-    }
-    return !!this.cognitoUser && !!this.session && this.session.isValid();
+    return this.currentSession$.getValue().state === 'signedIn';
   }
 
-  getAccessToken(): string {
-    return this.session ? this.session.getAccessToken().getJwtToken() : '';
+  getCurrentSessionIdTokenPayload(): { [key: string]: any } {
+    const { user } = this.currentSession$.getValue();
+    return R.path(['signInUserSession', 'idToken', 'payload'], user) || {};
   }
 
-  notAuthorized(): void {
-    console.log('not Authorized');
-    this.session.isValid();
+  getUserEmail() {
+    return this.getCurrentSessionIdTokenPayload().email;
   }
 
-  private _reloadSession(): void {
-    this._createSession(this._getUserPool().getCurrentUser());
-  }
-
-  private _createSession(cognitoUser: ACI.CognitoUser): void {
-    if (cognitoUser != null) {
-      cognitoUser.getSession((err, session) => {
-        this.loading = false;
+  async refreshSessionPromise(): Promise<any> {
+    const session = await Auth.currentSession();
+    const refreshToken = session.getRefreshToken();
+    const user = await Auth.currentAuthenticatedUser({ bypassCache: true });
+    return new Promise((resolve, rej) => {
+      user.refreshSession(refreshToken, (err) => {
         if (err) {
-          this.cognitoUser = null;
-          console.error(err);
+          rej(err);
           return;
         }
-        this._initCognitoUserSession(cognitoUser, session);
+        this.amplifyService.setAuthState({ state: 'signedIn', user });
+        resolve();
       });
-    }
-  }
-
-  signOut(): void {
-    this.cognitoUser.signOut();
-    this.cognitoUser = null;
-  }
-
-  getUserName(): string {
-    return this.user.username;
-  }
-
-  login(model: IAuth): Observable<any> {
-    const self = this;
-    return Observable.create(observer => {
-      const authData = {
-        Username: model.username,
-        Password: model.password,
-      };
-
-      const authDetails = new ACI.AuthenticationDetails(authData);
-
-
-      const userData = {
-        Username: model.username,
-        Pool: this._getUserPool(),
-      };
-
-      const cognitoUser = new ACI.CognitoUser(userData);
-
-      const callbacks = {
-        onSuccess(session: ACI.CognitoUserSession): void {
-          observer.next({
-            user: cognitoUser,
-          });
-          observer.complete();
-          self._initCognitoUserSession(cognitoUser, session);
-        },
-        onFailure: (err => {
-          observer.error(err);
-          observer.complete();
-        }),
-      };
-      cognitoUser.authenticateUser(authDetails, callbacks);
     });
   }
+}
 
-  private _initCognitoUserSession(cognitoUser: ACI.CognitoUser, session: any): void {
-    this.cognitoUser = cognitoUser;
-    this.session = session;
-    this.user.username = session.idToken.payload['cognito:username'];
-    this.user.permissions = Number(session.idToken.payload['custom:permissions']);
-    this.user.region = session.idToken.payload['custom:region'];
-  }
-
-  private _getUserPool(): CognitoUserPoolWithStorage {
-    return new ACI.CognitoUserPool(POOL_DATA) as CognitoUserPoolWithStorage;
-  }
+export function AuthServiceFactory(provider: AuthService) {
+  return () => provider.init();
 }

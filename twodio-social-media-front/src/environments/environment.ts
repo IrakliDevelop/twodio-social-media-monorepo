@@ -4,8 +4,15 @@
 
 export const environment = {
   production: false,
-  cognitoUserPoolId: '',
-  cognitoClientId: '',
+  // TODO: add all credentials
+  amplify: {
+    Auth: {
+      identityPoolId: '',
+      region: 'eu-west-1',
+      userPoolId: ' eu-west-1_DaMN9gJqG',
+      // userPoolWebClientId: '',
+    },
+  },
 };
 
 /*
