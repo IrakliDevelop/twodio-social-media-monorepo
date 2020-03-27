@@ -4,7 +4,6 @@
 
 export const environment = {
   production: false,
-  // TODO: add all credentials
   amplify: {
     Auth: {
       identityPoolId: '634366997922',
