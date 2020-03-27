@@ -1,0 +1,35 @@
+{
+  "name": "twodio-social-media-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tasksfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "task": "node ./tasksfile.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IrakliDevelop/twodio-social-media-monorepo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IrakliDevelop/twodio-social-media-monorepo/issues"
+  },
+  "homepage": "https://github.com/IrakliDevelop/twodio-social-media-monorepo#readme",
+  "devDependencies": {
+    "@graphql-codegen/cli": "^1.13.1",
+    "@graphql-codegen/introspection": "1.13.1",
+    "@graphql-codegen/typescript": "1.13.1",
+    "@graphql-codegen/typescript-apollo-angular": "1.13.1",
+    "@graphql-codegen/typescript-operations": "1.13.1",
+    "graphql": "^14.6.0",
+    "tasksfile": "^5.1.0",
+    "yaml": "^1.8.3"
+  },
+  "dependencies": {
+    "@types/superagent": "^4.1.7",
+    "superagent": "^5.2.2"
+  }
+}
