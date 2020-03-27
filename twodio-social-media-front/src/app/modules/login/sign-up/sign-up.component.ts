@@ -54,6 +54,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       finalize(() => this.loading = false)
     ).subscribe(data => {
       console.log(data);
+      this.error$.next(null);
       this.emailConfirmationRequired = true;
     }, err => {
       console.error(err);
