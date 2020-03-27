@@ -14,7 +14,7 @@
       </div>
       <button class="full-width" mat-raised-button>login</button>
       <p class="message">Not registered? <a style="cursor: pointer" routerLink="/login/register">Create an account</a></p>
-      <div *ngIf="error$" class="error-message mb-2">
+      <div *ngIf="error$.getValue() !== null" class="error-message mb-2">
         {{this.error$.getValue()}}
       </div>
     </form>
