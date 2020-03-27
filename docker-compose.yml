@@ -5,7 +5,7 @@ services:
     ports:
       - 3000:3000
   client:
-    build: ./twodio-social-media-front
+    build: ./front
     ports:
       - 80:80
   graph-db:

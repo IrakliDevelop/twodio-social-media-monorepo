@@ -11,7 +11,7 @@ generates:
     plugins:
       - "typescript"
       - "typescript-operations"
-  ./twodio-social-media-front/src/app/core/models/generated.ts:
+  ./front/src/app/core/models/generated.ts:
     plugins:
       - "typescript"
       - "typescript-operations"
