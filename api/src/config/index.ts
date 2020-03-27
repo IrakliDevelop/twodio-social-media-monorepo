@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { config } from 'dotenv';
 
-config({ path: resolve(__dirname, '../.env' )});
+config({ path: resolve(__dirname, '../../.env' )});
 
 export = {
   isLambda: !!(process.env.LAMBDA_TASK_ROOT && process.env.AWS_EXECUTION_ENV),
