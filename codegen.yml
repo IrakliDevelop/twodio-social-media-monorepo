@@ -7,7 +7,7 @@ config:
   declarationKind:
     type: 'interface'
 generates:
-  ./api/types/generated.ts:
+  ./api/src/types/generated.ts:
     plugins:
       - "typescript"
       - "typescript-operations"
