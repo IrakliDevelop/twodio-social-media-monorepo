@@ -17,7 +17,7 @@ services:
       - zero
 
   zero:
-    image: dgraph/dgraph:latest
+    image: dgraph/dgraph:v20.03.0-beta.20200320
     volumes:
       - /tmp/data:/dgraph
     ports:
@@ -26,7 +26,7 @@ services:
     restart: on-failure
     command: dgraph zero --my=zero:5080
   alpha:
-    image: dgraph/dgraph:latest
+    image: dgraph/dgraph:v20.03.0-beta.20200320
     volumes:
       - /tmp/data:/dgraph
     ports:
@@ -35,7 +35,7 @@ services:
     restart: on-failure
     command: dgraph alpha --my=alpha:7080 --lru_mb=2048 --zero=zero:5080
   ratel:
-    image: dgraph/dgraph:latest
+    image: dgraph/dgraph:v20.03.0-beta.20200320
     ports:
       - 8000:8000
     command: dgraph-ratel
