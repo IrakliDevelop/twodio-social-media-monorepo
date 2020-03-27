@@ -28,10 +28,15 @@ export class SignInComponent implements OnInit, OnDestroy {
       email: new FormControl('', [Validators.required]),
       password: new FormControl('', Validators.required),
     });
+
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['']);
+    }
   }
   onSignIn(): void {
     const { email, password } = this.signInForm.value;
     if (!this.signInForm.valid) {
+      this.error$.next('Please, fill out all fields');
       return;
     }
     this.loading = true;
@@ -41,6 +46,7 @@ export class SignInComponent implements OnInit, OnDestroy {
         finalize(() => this.loading = false)
       ).subscribe( data => {
         console.log(data);
+        this.router.navigate(['']).then(() => this.loading = false);
     }, err => {
         console.error(err);
         this.error$.next(err);
