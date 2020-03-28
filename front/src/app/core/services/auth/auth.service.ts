@@ -11,8 +11,6 @@ import {AuthData} from '../../models';
 
 Amplify.configure(environment.amplify);
 
-// tslint:disable-next-line:prefer-const
-let amplifyService: AmplifyService;
 
 const SESSION_INITIAL: AuthState = {
   state: 'signedOut',
@@ -22,9 +20,8 @@ const SESSION_INITIAL: AuthState = {
 @Injectable()
 export class AuthService extends AuthData {
   currentSession$: BehaviorSubject<AuthState> = new BehaviorSubject(SESSION_INITIAL);
-  amplifyService: AmplifyService;
-  constructor() {
-    super(amplifyService);
+  constructor(private amplifyService: AmplifyService) {
+    super();
   }
 
   async init(): Promise<any> {

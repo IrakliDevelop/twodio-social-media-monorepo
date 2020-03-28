@@ -8,8 +8,7 @@ export interface IAuth {
 }
 
 export abstract class AuthData {
-  protected constructor(amplifyService: AmplifyService) {
-  }
+
   abstract isAuthenticated(): boolean;
   abstract signIn(email: string, password: string): Observable<CognitoUser>;
   abstract signUp(email: string, password: string): Observable<any>;
