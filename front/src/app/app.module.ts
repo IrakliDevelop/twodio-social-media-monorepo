@@ -2,10 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AmplifyAngularModule, AmplifyService, AmplifyModules } from 'aws-amplify-angular';
-import Auth from '@aws-amplify/auth';
-import Interactions from '@aws-amplify/interactions';
-import Storage from '@aws-amplify/storage';
+import { AmplifyAngularModule } from 'aws-amplify-angular';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,16 +21,7 @@ import { SharedModule } from './shared/shared.module';
     AmplifyAngularModule,
     BrowserAnimationsModule,
   ],
-  providers: [{
-    provide: AmplifyService,
-    useFactory:  () => {
-      return AmplifyModules({
-        Auth,
-        Storage,
-        Interactions,
-      });
-    },
-  }],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

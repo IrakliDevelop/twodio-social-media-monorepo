@@ -1,18 +1,35 @@
-import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import {APP_INITIALIZER, ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {AuthGuard} from './guards';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import {AuthService} from './services';
+import {AmplifyModules, AmplifyService} from 'aws-amplify-angular';
+import Auth from '@aws-amplify/auth';
+import Storage from '@aws-amplify/storage';
+import Interactions from '@aws-amplify/interactions';
+
+import { AuthGuard } from './guards';
+import { AuthService, AuthServiceFactory } from './services';
 import { AuthInterceptorService } from './utils';
-import {throwIfAlreadyLoaded} from './throw-if-already-loaded';
+import { throwIfAlreadyLoaded } from './throw-if-already-loaded';
+
 
 const PROVIDERS = [
   AuthGuard,
   AuthService,
+  { provide: APP_INITIALIZER, useFactory: AuthServiceFactory, deps: [AuthService], multi: true },
   {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptorService,
     multi: true,
+  },
+  {
+    provide: AmplifyService,
+    useFactory:  () => {
+      return AmplifyModules({
+        Auth,
+        Storage,
+        Interactions,
+      });
+    },
   },
 ];
 
