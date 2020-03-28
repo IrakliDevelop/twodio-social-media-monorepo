@@ -12,7 +12,7 @@
         <label for="inputPassword" class="sr-only">Password</label>
         <input id="inputPassword" type="password" class="form-control mb-2" placeholder="password" formControlName="password"/>
       </div>
-      <button class="full-width" mat-raised-button>login</button>
+      <button class="full-width" mat-raised-button (click)="onSignIn()">login</button>
       <p class="message">Not registered? <a style="cursor: pointer" routerLink="/login/register">Create an account</a></p>
       <div *ngIf="error$.getValue() !== null" class="error-message mb-2">
         {{this.error$.getValue()}}

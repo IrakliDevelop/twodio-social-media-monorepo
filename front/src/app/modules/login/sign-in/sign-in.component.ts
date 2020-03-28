@@ -49,7 +49,7 @@ export class SignInComponent implements OnInit, OnDestroy {
         this.router.navigate(['']).then(() => this.loading = false);
     }, err => {
         console.error(err);
-        this.error$.next(err);
+        this.error$.next(err.message);
     });
   }
   ngOnDestroy(): void {
