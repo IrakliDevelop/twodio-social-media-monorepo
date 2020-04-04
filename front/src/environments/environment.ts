@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   amplify: {
     Auth: {
-      identityPoolId: '634366997922',
+      // identityPoolId: '634366997922',
       region: 'eu-west-1',
       userPoolId: 'eu-west-1_DaMN9gJqG',
       userPoolWebClientId: 'd26jcsmchv8mp6r2m6mppopmd',
