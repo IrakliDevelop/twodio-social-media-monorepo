@@ -8,10 +8,19 @@ export type Scalars = {
   Float: number;
 };
 
-export interface IUser {
-  id: Scalars['ID'];
-  username: Scalars['String'];
-  email: Scalars['String'];
+export interface AuthData {
+  provider: AuthProvider;
+  sub: Scalars['String'];
+  user?: Maybe<User>;
+}
+
+export interface AuthProvider {
   name: Scalars['String'];
+}
+
+export interface User {
+  id: Scalars['ID'];
+  email: Scalars['String'];
+  authData?: Maybe<AuthData>;
 }
 

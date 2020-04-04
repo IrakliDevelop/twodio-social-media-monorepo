@@ -2,7 +2,7 @@ overwrite: true
 schema: "./database/schema.gql"
 # documents: "src/**/*.graphql"
 config:
-  typesPrefix: I
+  # typesPrefix: I
   skipTypename: true
   declarationKind:
     type: 'interface'

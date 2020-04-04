@@ -1,6 +1,15 @@
 type User {
   id: ID!
-  username: String!
-  email: String!
-  name: String!
+  email: String! @search(by: [exact, trigram])
+  authData: AuthData @hasInverse(field: user)
+}
+
+type AuthProvider {
+  name: String! @search(by: [exact])
+}
+
+type AuthData {
+  provider: AuthProvider!
+  sub: String! @id
+  user: User @hasInverse(field: authData)
 }

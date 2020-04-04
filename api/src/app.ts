@@ -1,11 +1,14 @@
+import 'reflect-metadata';
+import './database';
 import express, { Express } from 'express';
-import bodyParser from 'body-parser';
+import errorHandler from './middlewares/error-handler';
 
 import config from './config';
 
 const app: Express = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(errorHandler());
 
 if (!config.isLambda) {
   app.listen(config.server.port, () => console.log(`Api listening on port ${config.server.port}`));
