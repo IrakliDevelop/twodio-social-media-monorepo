@@ -24,10 +24,10 @@ export default {
   db: {
     url: notNullEnv('DATABASE_URL'),
   },
-  jwt: {
-    secret: process.env.JWT_SECRET || 'EXAMPLE_SECRET',
-    options: {
-      expiresIn: '20d',
+  auth: {
+    cognito: {
+      poolId: notNullEnv('COGNITO_POOL_ID'),
+      jwtOptions: {},
     },
   },
 };
