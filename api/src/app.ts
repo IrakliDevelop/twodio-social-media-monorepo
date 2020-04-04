@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+import './database';
 import express, { Express } from 'express';
 import errorHandler from './middlewares/error-handler';
 
