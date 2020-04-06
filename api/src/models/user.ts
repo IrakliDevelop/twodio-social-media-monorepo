@@ -25,9 +25,9 @@ export default class {
 
     const request = new DgraphRequest();
     request.setQuery(`query q($userEmail: string, $authProviderName: string, $authDataSub: string) {
-      authProvider as var(func: eq(AuthProvider.name, $authProviderName))
-      authData as var(func: eq(AuthData.sub, $authDataSub))
-      user as var(func: eq(User.email, $userEmail))
+      authProvider(func: eq(AuthProvider.name, $authProviderName)) { authProviderID as uid }
+      authData(func: eq(AuthData.sub, $authDataSub)) { authDataID as uid }
+      user(func: eq(User.email, $userEmail)) { userID as uid }
     }`);
 
     setVars(request.getVarsMap(), {
@@ -40,20 +40,20 @@ export default class {
     const mu = new Mutation();
     mu.setSetJson({ set: [{
       'dgraph.type': 'User',
-      'uid': Uid('user'),
+      'uid': 'uid(userID)',
       'User.email': user.email,
       'User.authData': {
+        'uid': 'uid(authDataID)',
         'dgraph.type': 'AuthData',
         'AuthData.sub': user.authData.sub,
-        'AuthData.user': UidDep('user'),
+        'AuthData.user': 'uid(userID)',
         'AuthData.provider': {
           'dgraph.type': 'AuthProvider',
+          'uid': 'uid(authProviderID)',
           'AuthProvider.name': user.authData.provider.name,
         },
       },
     }] });
-    mu.setCond('@if(eq(len(user), 0) AND eq(len(authData), 0) AND eq(len(authProvider), 0))');
-    mu.getSetNquads();
 
     request.addMutations(mu);
     request.setCommitNow(true);
