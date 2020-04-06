@@ -15,12 +15,12 @@ declare global {
   }
 }
 
-async function fetchOrAddCognitoUser(cognitoUser?: types.CognitoUser) {
+async function createCognitoUser(cognitoUser?: types.CognitoUser) {
   if (!cognitoUser) {
     throw new jwt.UnauthorizedError('credentials_required', { message: 'Unautorized' });
   }
 
-  await container.resolve(User).fetchOrAdd({
+  await container.resolve(User).create({
     email: cognitoUser.email,
     authData: {
       sub: cognitoUser.sub,
@@ -54,7 +54,10 @@ export function cognitoAuthenticator(
 
   return compose(
     jwtMiddleware,
-    (req: Request, res: Response) => fetchOrAddCognitoUser(req.user)
+    (req: Request, res: Response, next: NextFunction) =>  {
+      createCognitoUser(req.user);
+      next();
+    }
   );
 }
 

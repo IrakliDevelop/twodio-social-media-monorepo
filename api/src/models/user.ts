@@ -18,7 +18,7 @@ export default class {
     private client: DgraphClient
   ) { }
 
-  async fetchOrAdd(user: types.PartialBy<types.User, 'id'>) {
+  async create(user: types.PartialBy<types.User, 'id'>) {
     if (!user.authData) {
       throw Error();
     }
