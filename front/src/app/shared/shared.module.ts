@@ -6,6 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxLoadingModule } from 'ngx-loading';
 import { HeaderComponent } from '@shared/components';
 import { FooterComponent } from '@shared/components';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 
 const SHARED_MODULES = [
@@ -17,7 +18,7 @@ const SHARED_MODULES = [
 ];
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent],
+  declarations: [HeaderComponent, FooterComponent, SidebarComponent],
   imports: [
     CommonModule,
     ...SHARED_MODULES,
@@ -25,6 +26,7 @@ const SHARED_MODULES = [
   exports: [
     ...SHARED_MODULES,
     HeaderComponent,
+    SidebarComponent,
   ],
 })
 export class SharedModule {
