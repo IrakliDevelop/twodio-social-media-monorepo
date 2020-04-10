@@ -1,1 +1,8 @@
-<router-outlet></router-outlet>
+<div class="wrapper">
+  <div class="main-panel">
+    <app-header *ngIf="isAuthenticated"></app-header>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

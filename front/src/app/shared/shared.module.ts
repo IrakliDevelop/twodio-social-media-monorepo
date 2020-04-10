@@ -4,8 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './material.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxLoadingModule } from 'ngx-loading';
-import { HeaderComponent } from './components/header/header.component';
-import { FooterComponent } from './components/footer/footer.component';
+import { HeaderComponent } from '@shared/components';
+import { FooterComponent } from '@shared/components';
 
 
 const SHARED_MODULES = [
@@ -24,6 +24,7 @@ const SHARED_MODULES = [
   ],
   exports: [
     ...SHARED_MODULES,
+    HeaderComponent,
   ],
 })
 export class SharedModule {

@@ -1,6 +1,8 @@
 @import '~bootstrap/scss/bootstrap';
 @import 'mixins';
 @import 'variables';
+@import 'responsive';
+@import "sidebar-and-main-panel";
 @import "modules/signup";
 
 @import 'header';

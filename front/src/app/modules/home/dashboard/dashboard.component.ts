@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._loadUser();
+    // this._loadUser();
   }
 
   private _loadUser(): any {
