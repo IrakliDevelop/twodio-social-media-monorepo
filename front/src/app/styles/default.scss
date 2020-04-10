@@ -1,6 +1,9 @@
 @import '~bootstrap/scss/bootstrap';
-@import "modules/signup";
+@import 'mixins';
 @import 'variables';
+@import "modules/signup";
+
+@import 'header';
 
 .error-message {
   font-size: 18px;
