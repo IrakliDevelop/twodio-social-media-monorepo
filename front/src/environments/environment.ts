@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  ApiUrl: 'http://localhost:',
   amplify: {
     Auth: {
       // identityPoolId: '634366997922',
