@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@types/superagent": "^4.1.7",
+    "colors": "^1.4.0",
     "superagent": "^5.2.2"
   }
 }
