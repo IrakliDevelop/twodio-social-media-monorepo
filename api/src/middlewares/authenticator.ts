@@ -1,11 +1,8 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import jwt from 'express-jwt';
-import { compose } from 'compose-middleware';
 import { expressJwtSecret } from 'jwks-rsa';
-import { container } from 'tsyringe';
 import config from '../config';
 import * as types from '../types';
-import User from '../models/user';
 
 declare global {
   namespace Express {
@@ -16,19 +13,8 @@ declare global {
 }
 
 async function createCognitoUser(cognitoUser?: types.CognitoUser) {
-  if (!cognitoUser) {
-    throw new jwt.UnauthorizedError('credentials_required', { message: 'Unautorized' });
-  }
 
-  await container.resolve(User).create({
-    email: cognitoUser.email,
-    authData: {
-      sub: cognitoUser.sub,
-      provider: {
-        name: 'cognito',
-      },
-    },
-  });
+  
 }
 
 export function cognitoAuthenticator(
@@ -41,7 +27,7 @@ export function cognitoAuthenticator(
   }
 
   const issuer = `https://cognito-idp.${region}.amazonaws.com/${poolId}`;
-  const jwtMiddleware = jwt({
+  return jwt({
     issuer,
     algorithms: ['RS256'],
     secret: expressJwtSecret({
@@ -51,17 +37,9 @@ export function cognitoAuthenticator(
     }),
     ...expressJwtOptions,
   });
-
-  return compose(
-    jwtMiddleware,
-    (req: Request, res: Response, next: NextFunction) =>  {
-      createCognitoUser(req.user);
-      next();
-    }
-  );
 }
 
-export default () => cognitoAuthenticator(
+export const authenticator = () => cognitoAuthenticator(
   config.auth.cognito.poolId,
   config.auth.cognito.jwtOptions
 );
