@@ -1,22 +1,45 @@
 import { injectable } from 'tsyringe';
 import { DgraphClient, Mutation, Request as DgraphRequest } from 'dgraph-js';
-import * as jspb from 'google-protobuf';
+import * as R from 'ramda';
 import * as types from '../types';
+import { ProjectionType, Query, setVarsForRequest } from './utils';
 
-function setVars(varsMap: jspb.Map<string, string>, vars: Record<string, any>) {
-  Object.keys(vars).forEach(k => varsMap.set('$' + k, vars[k]));
-  return varsMap;
-}
-
-const Uid = (uid: string) => '_:' + uid;
-const UidDep = (uid: string) => ({ uid: Uid(uid) });
+const extractPath = R.curry(path => R.pipe(
+  R.invoker(0, 'getJson'),
+  R.path(path)
+));
 
 @injectable()
-export default class {
+export class UserModel {
 
   constructor(
     private client: DgraphClient
   ) { }
+
+
+  async fetchByID(id: string, projection: ProjectionType, queryName = 'q') {
+    const query = new Query('user', queryName)
+      .func('eq(User.uid, $id)')
+      .project(projection)
+      .vars({ id: ['string', id] });
+
+    return this.client
+      .newTxn()
+      .queryWithVars(query.toString(), query.queryVarsObj)
+      .then(extractPath([queryName, 0]));
+  }
+
+  async fetchByAuthSub(sub: string, projection: ProjectionType, queryName = 'q') {
+    const query = new Query('authData', queryName)
+      .func('eq(AuthData.sub, $sub)')
+      .project({ user: projection })
+      .vars({ sub: ['string', sub] });
+
+    return this.client
+      .newTxn()
+      .queryWithVars(query.toString(), query.queryVarsObj)
+      .then(extractPath([queryName, 0, 'user']));
+  }
 
   async create(user: types.PartialBy<types.User, 'id'>) {
     if (!user.authData) {
@@ -30,7 +53,7 @@ export default class {
       user(func: eq(User.email, $userEmail)) { userID as uid }
     }`);
 
-    setVars(request.getVarsMap(), {
+    setVarsForRequest(request.getVarsMap(), {
       userEmail: user.email,
       authProviderName: user.authData.provider.name,
       authDataSub: user.authData.sub,
