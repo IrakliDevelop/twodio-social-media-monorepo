@@ -22,7 +22,7 @@ export const authRouter = () => {
     });
 
     res.json({ ok: true });
-  })
+  });
 
   return router;
 };

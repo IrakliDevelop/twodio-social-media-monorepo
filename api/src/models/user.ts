@@ -16,7 +16,6 @@ export class UserModel {
     private client: DgraphClient
   ) { }
 
-
   async fetchByID(id: string, projection: ProjectionType, queryName = 'q') {
     const query = new Query('user', queryName)
       .func('eq(User.uid, $id)')
