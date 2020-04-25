@@ -5,10 +5,12 @@ type User {
 }
 
 type AuthProvider {
+  id: ID!
   name: String! @search(by: [exact])
 }
 
 type AuthData {
+  id: ID!
   provider: AuthProvider!
   sub: String! @id
   user: User @hasInverse(field: authData)

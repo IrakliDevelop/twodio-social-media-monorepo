@@ -9,12 +9,14 @@ export type Scalars = {
 };
 
 export interface AuthData {
+  id: Scalars['ID'];
   provider: AuthProvider;
   sub: Scalars['String'];
   user?: Maybe<User>;
 }
 
 export interface AuthProvider {
+  id: Scalars['ID'];
   name: Scalars['String'];
 }
 

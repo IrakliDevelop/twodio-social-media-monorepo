@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { DgraphClient, Mutation, Request as DgraphRequest } from 'dgraph-js';
 import * as R from 'ramda';
+import { PartialBy, User, AuthData, AuthProvider } from '../types';
 import {
   ProjectionType,
   Query,
@@ -8,10 +9,13 @@ import {
   extractPath,
 } from './utils';
 
-const extractPath = R.curry(path => R.pipe(
-  R.invoker(0, 'getJson'),
-  R.path(path)
-));
+interface UserCreateArg extends Omit<User, 'id' | 'authData'> {
+  id?: User['id'];
+  authData: Omit<AuthData, 'id' | 'provider'> & {
+    id?: AuthData['id'];
+    provider: PartialBy<AuthProvider, 'id'>;
+  };
+}
 
 @injectable()
 export class UserModel {
@@ -44,7 +48,7 @@ export class UserModel {
       .then(extractPath([queryName, 0, 'user']));
   }
 
-  async create(user: types.PartialBy<types.User, 'id'>) {
+  async create(user: UserCreateArg) {
     if (!user.authData) {
       throw Error();
     }
