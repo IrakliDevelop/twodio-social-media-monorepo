@@ -20,9 +20,16 @@ export interface AuthProvider {
   name: Scalars['String'];
 }
 
+export interface Post {
+  id: Scalars['ID'];
+  text?: Maybe<Scalars['String']>;
+  user: User;
+}
+
 export interface User {
   id: Scalars['ID'];
   email: Scalars['String'];
   authData?: Maybe<AuthData>;
+  posts?: Maybe<Array<Maybe<Post>>>;
 }
 

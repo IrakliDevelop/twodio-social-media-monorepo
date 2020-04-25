@@ -2,6 +2,7 @@ type User {
   id: ID!
   email: String! @search(by: [exact, trigram])
   authData: AuthData @hasInverse(field: user)
+  posts: [Post] @hasInverse(field: user)
 }
 
 type AuthProvider {
@@ -14,4 +15,10 @@ type AuthData {
   provider: AuthProvider!
   sub: String! @id
   user: User @hasInverse(field: authData)
+}
+
+type Post {
+  id: ID!
+  text: String
+  user: User! @hasInverse(field: posts)
 }

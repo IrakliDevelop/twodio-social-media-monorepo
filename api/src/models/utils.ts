@@ -21,7 +21,10 @@ export function setVarsForRequest(
   varsMap: jspb.Map<string, string>,
   vars: Record<string, any>
 ) {
-  Object.keys(vars).forEach(k => varsMap.set('$' + k, vars[k]));
+  Object.keys(vars).forEach(k => varsMap.set(
+    !k.startsWith('$') ? '$' + k : k,
+    vars[k]
+  ));
   return varsMap;
 }
 
