@@ -3,8 +3,7 @@ import R from 'ramda';
 import * as types from '../types';
 
 export type ProjectionType = types.ObjectOrValue<string | boolean | 0 | 1>;
-export type QueryVarType =
-  'int' | 'float' | 'string' | 'bool' | 'id' | 'dateTime' | 'geo';
+export type QueryVarType = 'int' | 'float' | 'string' | 'bool';
 export type QueryVars = {
   [key: string]: Parameters<(type: QueryVarType, value: any) => 0>
 };
