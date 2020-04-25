@@ -1,8 +1,12 @@
 import { injectable } from 'tsyringe';
 import { DgraphClient, Mutation, Request as DgraphRequest } from 'dgraph-js';
 import * as R from 'ramda';
-import * as types from '../types';
-import { ProjectionType, Query, setVarsForRequest } from './utils';
+import {
+  ProjectionType,
+  Query,
+  setVarsForRequest,
+  extractPath,
+} from './utils';
 
 const extractPath = R.curry(path => R.pipe(
   R.invoker(0, 'getJson'),

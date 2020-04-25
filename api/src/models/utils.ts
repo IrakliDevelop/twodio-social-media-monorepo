@@ -25,6 +25,12 @@ export function setVarsForRequest(
   return varsMap;
 }
 
+// extract json from dgraph query result and return json on path
+export const extractPath = R.curry(path => R.pipe(
+  R.invoker(0, 'getJson'),
+  R.path(path)
+));
+
 // const Uid = (uid: string) => '_:' + uid;
 // const UidDep = (uid: string) => ({ uid: Uid(uid) });
 
