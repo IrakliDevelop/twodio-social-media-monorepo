@@ -23,7 +23,7 @@ export class PostModel {
 
   async fetchByID(id: string, projection: ProjectionType, queryName = 'q') {
     const query = new Query('post', queryName)
-      .func('eq(Post.uid, $id)')
+      .func('uid($id)')
       .project(projection)
       .vars({ id: ['string', id] });
 

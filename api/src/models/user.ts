@@ -26,7 +26,7 @@ export class UserModel {
 
   async fetchByID(id: string, projection: ProjectionType, queryName = 'q') {
     const query = new Query('user', queryName)
-      .func('eq(User.uid, $id)')
+      .func('uid($id)')
       .project(projection)
       .vars({ id: ['string', id] });
 
@@ -91,5 +91,6 @@ export class UserModel {
     const txn = this.client.newTxn();
 
     const result = await txn.doRequest(request);
+    console.log(result.getJson())
   }
 }
