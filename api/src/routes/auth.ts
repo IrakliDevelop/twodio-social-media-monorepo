@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { container } from 'tsyringe';
+import { authenticator } from '../middlewares/authenticator';
 import { UserModel } from '../models';
 
 export const authRouter = () => {
   const router = Router();
 
-  router.use('/signup', async (req, res) => {
+  router.post('/signup', authenticator(), async (req, res) => {
     const user = {
       ...req.body,
       ...req.user,

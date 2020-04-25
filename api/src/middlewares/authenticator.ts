@@ -12,11 +12,6 @@ declare global {
   }
 }
 
-async function createCognitoUser(cognitoUser?: types.CognitoUser) {
-
-  
-}
-
 export function cognitoAuthenticator(
   poolId: string,
   expressJwtOptions: Partial<jwt.Options> = {}
