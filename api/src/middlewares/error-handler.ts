@@ -8,6 +8,7 @@ export default function() {
     res: Response,
     next: NextFunction
   ) => {
+    console.error(err);
     const sendErr = (
       status: number,
       code: string,
