@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UnauthorizedError } from 'express-jwt';
+import { SignupRequiredError } from '../errors/signupRequiredError';
 
 export default function() {
   return (
@@ -15,7 +16,10 @@ export default function() {
       message: string = code
     ) => res.status(status).send({ ok: false, code, message });
 
-    if (err instanceof UnauthorizedError) {
+    if (
+      err instanceof UnauthorizedError ||
+      err instanceof SignupRequiredError
+    ) {
       return sendErr(401, err.code, err.message);
     }
     return sendErr(500, 'internal_server_error');

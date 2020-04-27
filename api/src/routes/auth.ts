@@ -1,15 +1,14 @@
 import { Router } from 'express';
 import { container } from 'tsyringe';
-import { authenticator } from '../middlewares/authenticator';
 import { UserModel } from '../models';
 
 export const authRouter = () => {
   const router = Router();
 
-  router.post('/signup', authenticator(), async (req, res) => {
+  router.post('/signup', async (req, res) => {
     const user = {
       ...req.body,
-      ...req.user,
+      ...req.cognitoUser,
     };
 
     await container.resolve(UserModel).create({

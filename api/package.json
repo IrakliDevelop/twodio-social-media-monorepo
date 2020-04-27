@@ -36,6 +36,7 @@
     "jwks-rsa": "^1.7.0",
     "ramda": "^0.27.0",
     "reflect-metadata": "^0.1.13",
+    "ts-node-dev": "^1.0.0-pre.44",
     "tsyringe": "^4.1.0"
   }
 }

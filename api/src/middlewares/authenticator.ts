@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
+import { compose } from 'compose-middleware';
 import jwt from 'express-jwt';
 import { expressJwtSecret } from 'jwks-rsa';
 import config from '../config';
-import * as types from '../types';
+import { AuthenticatedUser, CognitoUser } from '../types';
+import { container } from 'tsyringe';
+import { UserModel } from '../models';
+import { SignupRequiredError } from '../errors/signupRequiredError';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: types.CognitoUser;
+      user?: AuthenticatedUser;
+      cognitoUser?: CognitoUser;
     }
   }
 }
@@ -30,11 +35,45 @@ export function cognitoAuthenticator(
       rateLimit: true,
       jwksUri: `${issuer}/.well-known/jwks.json`,
     }),
+    userProperty: 'cognitoUser',
     ...expressJwtOptions,
   });
 }
 
-export const authenticator = () => cognitoAuthenticator(
-  config.auth.cognito.poolId,
-  config.auth.cognito.jwtOptions
-);
+export function authenticator(attachUser = true) {
+  const cognitoAuth = cognitoAuthenticator(
+    config.auth.cognito.poolId,
+    config.auth.cognito.jwtOptions
+  );
+
+  if (!attachUser) {
+    return cognitoAuth;
+  }
+
+  return compose(
+    cognitoAuth,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        if (!req.cognitoUser) {
+          throw new jwt.UnauthorizedError(
+            'credentials_required',
+            { message:'Unauthorized' }
+          );
+        }
+
+        req.user = await container.resolve(UserModel)
+          .fetchByAuthSub(req.cognitoUser.sub, {
+            id: 1,
+            email: 1,
+          }) as AuthenticatedUser;
+
+        if (!req.user) {
+          throw new SignupRequiredError();
+        }
+        next();
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+}
