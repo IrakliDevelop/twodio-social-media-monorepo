@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '@core/services/user/user.service';
-import { finalize, first } from 'rxjs/operators';
+import { catchError, finalize, first } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,15 +17,25 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this._loadUser();
+    this._loadUser();
   }
 
   private _loadUser(): any {
     this.loading = true;
     this.userService.fetchUserData().pipe(
       first(),
+      catchError((err) => {
+        return of({...err, error: true});
+      }),
       finalize(() => this.loading = false)
-    ).subscribe(data => console.log(data));
+    ).subscribe(data => {
+      if (data.error) {
+        if (data.status === 401) {
+          console.log(data);
+          // todo: redirect to setup
+        }
+      }
+    });
   }
 
 }
