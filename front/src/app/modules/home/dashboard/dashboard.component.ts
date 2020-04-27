@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '@core/services/user/user.service';
-import { catchError, finalize, first } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
+import { catchError, finalize, first } from 'rxjs/operators';
+
+import { UserService } from '@core/services/user/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,7 +14,8 @@ export class DashboardComponent implements OnInit {
   private loading: boolean;
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {
   }
 
@@ -33,6 +36,7 @@ export class DashboardComponent implements OnInit {
         if (data.status === 401) {
           console.log(data);
           // todo: redirect to setup
+          this.router.navigate(['login/setup']);
         }
       }
     });

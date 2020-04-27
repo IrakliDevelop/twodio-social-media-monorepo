@@ -5,11 +5,12 @@ import { LoginRoutingModule } from './login-routing.module';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
+import { SetupProfileComponent } from './setup/setup-profile.component';
 
 
 
 @NgModule({
-  declarations: [SignInComponent, SignUpComponent, PasswordResetComponent],
+  declarations: [SignInComponent, SignUpComponent, PasswordResetComponent, SetupProfileComponent],
   imports: [
     CommonModule,
     LoginRoutingModule,
