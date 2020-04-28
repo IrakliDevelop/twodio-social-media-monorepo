@@ -38,5 +38,21 @@ export const postsRouter = () => {
     res.json(post || null);
   });
 
+  router.post('/', async (req: Request, res: Response) => {
+    const post = {
+      ...req.body,
+      user: {
+        id: req.user!.id,
+      },
+    };
+
+    const id = await postModel.create({
+      text: post.text,
+      user: post.user,
+    });
+
+    res.json({ ...post, id });
+  });
+
   return router;
 };
