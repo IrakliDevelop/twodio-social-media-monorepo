@@ -5,6 +5,7 @@ import { RequireOnly, User, Post } from '../types';
 import {
   Projection,
   Query,
+  Edge,
   setVarsForRequest,
   extractPath,
 } from './utils';
@@ -20,6 +21,29 @@ export class PostModel {
   constructor(
     private client: DgraphClient
   ) { }
+
+  async fetchByUserID(userID: string, projection: Projection, {
+    queryName = 'q',
+    first = 20,
+    offset = 0,
+    after = '',
+    maxCount = 20,
+  } = {}) {
+    const query = new Query('user', queryName)
+      .func('uid($userID)')
+      .project({
+        posts: Edge.fromRaw('post', projection)
+          .first(Math.min(maxCount, first))
+          .offset(offset)
+          .after(after),
+      })
+      .vars({ userID: ['string', userID] });
+
+    return this.client
+      .newTxn()
+      .queryWithVars(query.toString(), query.queryVarsObj)
+      .then(extractPath([queryName, 0, 'posts']));
+  }
 
   async fetchByID(id: string, projection: Projection, {
     queryName = 'q',
