@@ -3,7 +3,7 @@ import { DgraphClient, Mutation, Request as DgraphRequest } from 'dgraph-js';
 import * as R from 'ramda';
 import { RequireOnly, User, Post } from '../types';
 import {
-  ProjectionType,
+  Projection,
   Query,
   setVarsForRequest,
   extractPath,
@@ -21,7 +21,9 @@ export class PostModel {
     private client: DgraphClient
   ) { }
 
-  async fetchByID(id: string, projection: ProjectionType, queryName = 'q') {
+  async fetchByID(id: string, projection: Projection, {
+    queryName = 'q',
+  } = {}) {
     const query = new Query('post', queryName)
       .func('uid($id)')
       .project(projection)

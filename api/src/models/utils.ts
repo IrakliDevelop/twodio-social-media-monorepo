@@ -1,8 +1,9 @@
 import * as jspb from 'google-protobuf';
 import R from 'ramda';
-import * as types from '../types';
+import { ObjectOrValue } from '../types';
 
-export type ProjectionType = types.ObjectOrValue<string | boolean | 0 | 1>;
+export type RawProjection = ObjectOrValue<Edge | string | boolean | 0 | 1>;
+export type Projection = Edge | RawProjection;
 export type QueryVarType = 'int' | 'float' | 'string' | 'bool';
 export type QueryVars = {
   [key: string]: Parameters<(type: QueryVarType, value: any) => 0>
@@ -45,17 +46,69 @@ const keyActualField = (path: string[], key: string) => {
   return `${type}.${key}`;
 };
 
-class Projection {
+interface EdgeArgs {
+  first?: number;
+  offset?: number;
+  after?: string;
+}
+
+abstract class CommonEdge {
+  /** pagination and sorting args */
+  private args: EdgeArgs = {};
+
+  first(first?: number) {
+    this.args.first = !first ? undefined : Math.max(1, first);
+    return this;
+  }
+
+  offset(offset?: number) {
+    this.args.offset = offset;
+    return this;
+  }
+
+  after(after?: string) {
+    this.args.after = after;
+    return this;
+  }
+
+  argsStr() {
+    return Object.entries(this.args)
+      .filter(x => x[1])
+      .map(x => x.join(': '))
+      .join(', ')
+      .trim();
+  }
+}
+
+export class Edge extends CommonEdge {
+  static fromRaw(
+    rootType: string,
+    projection: Projection
+  ): Edge {
+    if (projection instanceof Edge) {
+      return projection;
+    }
+    return new Edge(rootType, projection);
+  }
+
   constructor(
     private rootType: string,
-    private projection: ProjectionType
-  ) { }
+    private edge: RawProjection
+  ) {
+    super();
+  }
 
   private *genLines(
-    obj: ProjectionType,
+    edge: Projection,
     path: string[]
   ): IterableIterator<[number, string]> {
-    for (const [key, val] of Object.entries(obj)) {
+    if (edge instanceof Edge) {
+      for (const [depth, line] of edge.lines()) {
+        yield [depth + path.length - 1, line];
+      }
+      return;
+    }
+    for (const [key, val] of Object.entries(edge)) {
       if (!val) {
         continue;
       }
@@ -64,7 +117,10 @@ class Projection {
       } else if (['number', 'boolean'].includes(typeof val)) {
         yield [path.length, `${key}: ${keyActualField(path, key)}`];
       } else {
-        yield [path.length, `${key}: ${keyActualField(path, key)} {`];
+        const field = keyActualField(path, key);
+        let argsStr = val instanceof Edge && val.argsStr();
+        argsStr = !argsStr ? '' : `(${argsStr})`;
+        yield [path.length, `${key}: ${field} ${argsStr}{`];
         yield *this.genLines(val as any, [...path, key]);
         yield [path.length, '}'];
       }
@@ -72,7 +128,7 @@ class Projection {
   }
 
   lines() {
-    return this.genLines(this.projection, [this.rootType]);
+    return this.genLines(this.edge, [this.rootType]);
   }
 
   toString(extraDepth = 0) {
@@ -82,50 +138,30 @@ class Projection {
   }
 }
 
-interface QueryFuncArgs {
-  first?: number;
-  offset?: number;
-  after?: number;
-}
-
-export class Query {
+export class Query extends CommonEdge {
   private queryFunc?: string;
-  private projection?: Projection;
+  private projection?: Edge;
   private queryVars?: QueryVars;
-  private funcArgs: QueryFuncArgs = {};
 
   constructor(
     private rootType: string,
     private queryName: string
-  ) { }
+  ) {
+    super();
+  }
 
   func(func: string) {
     this.queryFunc = func;
     return this;
   }
 
-  project(projection: ProjectionType) {
-    this.projection = new Projection(this.rootType, projection);
+  project(projection: Projection) {
+    this.projection = Edge.fromRaw(this.rootType, projection);
     return this;
   }
 
   vars(vars: QueryVars) {
     this.queryVars = vars;
-    return this;
-  }
-
-  first(first?: number) {
-    this.funcArgs.first = first;
-    return this;
-  }
-
-  offset(offset?: number) {
-    this.funcArgs.offset = offset;
-    return this;
-  }
-
-  after(after?: number) {
-    this.funcArgs.after = after;
     return this;
   }
 
@@ -135,19 +171,12 @@ export class Query {
       .join(', ');
   }
 
-  private get funcArgsStr() {
-    return Object.entries(this.funcArgs)
-      .map(x => x.join(': '))
-      .join(', ')
-      .trim();
-  }
-
   private buildQueryStr(extraDepth = 0) {
-    const fields = (this.projection as Projection).toString(extraDepth);
+    const fields = (this.projection as Edge).toString(extraDepth);
     const indent = indenter(extraDepth);
     const funcFullStr = [
       `func: ${this.queryFunc}`,
-      this.funcArgsStr,
+      this.argsStr(),
     ].filter(x => x).join(', ');
 
     return indent(`${this.queryName}(${funcFullStr}) {\n`)

@@ -3,7 +3,7 @@ import { DgraphClient, Mutation, Request as DgraphRequest } from 'dgraph-js';
 import * as R from 'ramda';
 import { PartialBy, User, AuthData, AuthProvider } from '../types';
 import {
-  ProjectionType,
+  Projection,
   Query,
   setVarsForRequest,
   extractPath,
@@ -24,7 +24,9 @@ export class UserModel {
     private client: DgraphClient
   ) { }
 
-  async fetchByID(id: string, projection: ProjectionType, queryName = 'q') {
+  async fetchByID(id: string, projection: Projection, {
+    queryName = 'q',
+  } = {}) {
     const query = new Query('user', queryName)
       .func('uid($id)')
       .project(projection)
@@ -36,7 +38,9 @@ export class UserModel {
       .then(extractPath([queryName, 0]));
   }
 
-  async fetchByAuthSub(sub: string, projection: ProjectionType, queryName = 'q') {
+  async fetchByAuthSub(sub: string, projection: Projection, {
+    queryName = 'q',
+  } = {}) {
     const query = new Query('authData', queryName)
       .func('eq(AuthData.sub, $sub)')
       .project({ user: projection })
