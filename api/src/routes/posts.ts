@@ -54,5 +54,19 @@ export const postsRouter = () => {
     res.json({ ...post, id });
   });
 
+  router.put('/:id', async (req: Request, res: Response) => {
+    const post = {
+      ...req.body,
+      id: req.params.id,
+    };
+
+    await postModel.update(req.user!.id, {
+      id: post.id,
+      text: post.text,
+    });
+
+    res.json(post);
+  });
+
   return router;
 };
