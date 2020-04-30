@@ -21,6 +21,6 @@ export class UserService {
   }
 
   finishRegistration(user: IUser): Observable<any> {
-    return this.http.post<any>(`${this.URL}/api/signup`, {user});
+    return this.http.post<any>(`${this.URL}/api/auth/signup`, {user});
   }
 }
