@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { FeedComponent } from './feed/feed.component';
 
 
 @NgModule({
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, FeedComponent],
   imports: [
     CommonModule,
     HomeRoutingModule,
