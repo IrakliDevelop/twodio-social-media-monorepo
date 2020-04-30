@@ -1,5 +1,6 @@
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
+import {AuthService} from '@core/services';
 
 @Component({
   selector: 'app-header',
@@ -16,7 +17,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(private renderer: Renderer2,
               private element: ElementRef,
-              private router: Router) {
+              private router: Router,
+              private authService: AuthService) {
     this.nativeElement = element.nativeElement;
     this.sidebarVisible = false;
   }
@@ -77,6 +79,10 @@ export class HeaderComponent implements OnInit {
       navbar.classList.remove('bg-white');
     }
 
+  }
+
+  signOut(): void {
+    this.authService.signOut();
   }
 
 }
