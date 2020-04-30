@@ -13,6 +13,8 @@ export const authRouter = () => {
 
     await container.resolve(UserModel).create({
       email: user.email,
+      username: user.username,
+      fullName: user.fullName,
       authData: {
         sub: user.sub,
         provider: {

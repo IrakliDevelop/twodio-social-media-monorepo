@@ -29,6 +29,8 @@ export interface Post {
 export interface User {
   id: Scalars['ID'];
   email: Scalars['String'];
+  username: Scalars['String'];
+  fullName: Scalars['String'];
   authData?: Maybe<AuthData>;
   posts?: Maybe<Array<Maybe<Post>>>;
 }
