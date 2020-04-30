@@ -65,6 +65,8 @@ export function authenticator(attachUser = true) {
           .fetchByAuthSub(req.cognitoUser.sub, {
             id: 1,
             email: 1,
+            username: 1,
+            fullName: 1,
           }) as AuthenticatedUser;
 
         if (!req.user) {

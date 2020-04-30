@@ -76,6 +76,8 @@ export class UserModel {
       'dgraph.type': 'User',
       'uid': 'uid(userID)',
       'User.email': user.email,
+      'User.username': user.username,
+      'User.fullName': user.fullName,
       'User.authData': {
         'uid': 'uid(authDataID)',
         'dgraph.type': 'AuthData',
@@ -95,6 +97,5 @@ export class UserModel {
     const txn = this.client.newTxn();
 
     const result = await txn.doRequest(request);
-    console.log(result.getJson())
   }
 }

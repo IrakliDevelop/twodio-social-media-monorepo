@@ -1,6 +1,8 @@
 type User {
   id: ID!
   email: String! @search(by: [exact, trigram])
+  username: String!
+  fullName: String!
   authData: AuthData @hasInverse(field: user)
   posts: [Post] @hasInverse(field: user)
 }
