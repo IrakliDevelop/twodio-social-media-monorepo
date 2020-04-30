@@ -82,7 +82,10 @@ export class HeaderComponent implements OnInit {
   }
 
   signOut(): void {
-    this.authService.signOut();
+    this.authService.signOut().subscribe(res => {
+      console.log(res);
+      this.router.navigate(['login']);
+    });
   }
 
 }
