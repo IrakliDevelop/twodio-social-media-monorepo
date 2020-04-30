@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { AuthService } from '@core/services';
 import { IUser } from '@core/models/user.model';
@@ -19,6 +20,7 @@ export class SetupProfileComponent implements OnInit {
 
   constructor(
     public fb: FormBuilder,
+    private router: Router,
     private authService: AuthService,
     private userService: UserService
   ) { }
@@ -43,7 +45,11 @@ export class SetupProfileComponent implements OnInit {
     this.user = this.profileForm.getRawValue();
     console.log(this.user);
     this.error$.next(null);
-    this.userService.finishRegistration(this.user);
+    this.userService.finishRegistration(this.user).subscribe(res => {
+      if (res.ok) {
+        this.router.navigate(['']);
+      }
+    });
   }
 
 }

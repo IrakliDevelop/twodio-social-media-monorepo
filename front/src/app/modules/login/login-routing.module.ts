@@ -4,6 +4,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { SetupProfileComponent } from './setup/setup-profile.component';
+import { AuthGuard } from '@core/guards';
 
 
 const routes: Routes = [
@@ -23,6 +24,7 @@ const routes: Routes = [
     path: 'setup',
     component: SetupProfileComponent,
     data: { title: 'setup' },
+    canActivate: [AuthGuard],
   },
 ];
 
