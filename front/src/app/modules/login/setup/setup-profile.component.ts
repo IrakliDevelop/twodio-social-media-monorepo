@@ -31,8 +31,8 @@ export class SetupProfileComponent implements OnInit {
     this.loading = false;
     this.profileForm = this.fb.group({
       email: [this.authService.getUserEmail()],
-      handle: new FormControl('', Validators.compose([Validators.required, Validators.minLength(5)])),
-      phone: new FormControl('', Validators.compose([Validators.required, Validators.pattern(/\b5\d{8}\b/)])),
+      username: new FormControl('', Validators.compose([Validators.required, Validators.minLength(5)])),
+      fullName: new FormControl('', Validators.compose([Validators.required, Validators.minLength(5)])),
     });
   }
 
