@@ -7,6 +7,7 @@
 <div>
   <h3>Posts</h3>
   <ul>
+    <ngx-loading [show]="allPostsLoading"></ngx-loading>
     <li *ngFor="let post of posts">
       {{post.text}}
     </li>

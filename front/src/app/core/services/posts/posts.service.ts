@@ -19,7 +19,7 @@ export class PostsService {
       params: {
         first: first.toString(),
         offset: offset.toString(),
-        after,
+        after: after ? after : '',
       },
     });
   }

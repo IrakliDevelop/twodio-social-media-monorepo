@@ -32,12 +32,14 @@ export class DashboardComponent implements OnInit {
       }),
       finalize(() => this.loading = false)
     ).subscribe(data => {
+      console.log(data);
       if (data.error) {
         if (data.status === 401) {
           console.log(data);
           // todo: redirect to setup
           this.router.navigate(['login/setup']);
         }
+        console.log('aaa');
       }
     });
   }

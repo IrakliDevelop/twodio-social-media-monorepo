@@ -43,7 +43,7 @@ export class FeedComponent implements OnInit {
     this.allPostsLoading = true;
     this.postsService.getPosts(limit, offset, after).pipe(
       takeUntil(this.unsubscribe$),
-      finalize(() => this.allPostsLoading = true)
+      finalize(() => this.allPostsLoading = false)
     ).subscribe(res => {
       console.log(res);
       this.posts = res;
@@ -54,7 +54,7 @@ export class FeedComponent implements OnInit {
     if (this.postForm.invalid) {
       return;
     }
-    this.post = {text: this.postForm.value};
+    this.post = this.postForm.value;
     console.log(this.post);
     this.singlePostLoading = true;
     this.postsService.createPost(this.post)
@@ -63,7 +63,11 @@ export class FeedComponent implements OnInit {
         finalize(
           () => this.singlePostLoading = false
           )
-      ).subscribe(res => console.log(res));
+      ).subscribe(res => {
+        if (res.text && res.text === this.post.text) { // TODO: this is temporarily. use proper success checking
+          this.loadPosts(this.limit, this.offset);
+        }
+    });
   }
 
 }
