@@ -1,1 +1,5 @@
-<p>feed works!</p>
+<form [formGroup]="postForm">
+  <ngx-loading [show]="postLoading"></ngx-loading>
+  <textarea formControlName="text"></textarea>
+  <button mat-raised-button (click)="addNewPost()">Post</button>
+</form>
