@@ -21,7 +21,8 @@ export class FeedComponent implements OnInit {
   postForm: FormGroup;
 
   unsubscribe$: Subject<void>;
-  postLoading: boolean;
+  singlePostLoading: boolean;
+  allPostsLoading: boolean;
 
   constructor(
     private postsService: PostsService,
@@ -39,7 +40,11 @@ export class FeedComponent implements OnInit {
   }
 
   loadPosts(limit: number, offset: number, after?: string) {
-    this.postsService.getPosts(limit, offset, after).subscribe(res => {
+    this.allPostsLoading = true;
+    this.postsService.getPosts(limit, offset, after).pipe(
+      takeUntil(this.unsubscribe$),
+      finalize(() => this.allPostsLoading = true)
+    ).subscribe(res => {
       console.log(res);
       this.posts = res;
     });
@@ -51,12 +56,12 @@ export class FeedComponent implements OnInit {
     }
     this.post = {text: this.postForm.value};
     console.log(this.post);
-    this.postLoading = true;
+    this.singlePostLoading = true;
     this.postsService.createPost(this.post)
       .pipe(
         takeUntil(this.unsubscribe$),
         finalize(
-          () => this.postLoading = false
+          () => this.singlePostLoading = false
           )
       ).subscribe(res => console.log(res));
   }

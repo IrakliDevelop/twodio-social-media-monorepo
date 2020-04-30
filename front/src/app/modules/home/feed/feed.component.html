@@ -1,5 +1,14 @@
 <form [formGroup]="postForm">
-  <ngx-loading [show]="postLoading"></ngx-loading>
+  <ngx-loading [show]="singlePostLoading"></ngx-loading>
   <textarea formControlName="text"></textarea>
   <button mat-raised-button (click)="addNewPost()">Post</button>
 </form>
+
+<div>
+  <h3>Posts</h3>
+  <ul>
+    <li *ngFor="let post of posts">
+      {{post.text}}
+    </li>
+  </ul>
+</div>
