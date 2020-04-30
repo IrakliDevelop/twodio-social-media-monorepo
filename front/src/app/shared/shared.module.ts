@@ -1,12 +1,13 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from './material.module';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgxLoadingModule } from 'ngx-loading';
-import { HeaderComponent } from '@shared/components';
-import { FooterComponent } from '@shared/components';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
+import {CommonModule} from '@angular/common';
+import { RouterModule } from '@angular/router';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MaterialModule} from './material.module';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgxLoadingModule} from 'ngx-loading';
+import {HeaderComponent} from '@shared/components';
+import {FooterComponent} from '@shared/components';
+import {SidebarComponent} from './components/sidebar/sidebar.component';
 
 
 const SHARED_MODULES = [
@@ -22,6 +23,7 @@ const SHARED_MODULES = [
   imports: [
     CommonModule,
     ...SHARED_MODULES,
+    RouterModule,
   ],
   exports: [
     ...SHARED_MODULES,
