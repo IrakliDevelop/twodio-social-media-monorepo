@@ -24,5 +24,7 @@ type AuthData {
 type Post {
   id: ID!
   text: String
+  created: DateTime! @search(by: [day])
+  updated: DateTime! @search(by: [day])
   user: User! @hasInverse(field: posts)
 }

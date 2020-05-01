@@ -19,6 +19,7 @@ export const postsRouter = () => {
         first: parseInt(req.query.first),
         offset: parseInt(req.query.offset),
         after: req.query.after,
+        orderDesc: 'Post.created',
       }
     );
 
@@ -39,8 +40,11 @@ export const postsRouter = () => {
   });
 
   router.post('/', async (req: Request, res: Response) => {
+    const date = new Date();
     const post = {
       ...req.body,
+      created: date,
+      updated: date,
       user: {
         id: req.user!.id,
       },
@@ -49,6 +53,8 @@ export const postsRouter = () => {
     const id = await postModel.create({
       text: post.text,
       user: post.user,
+      created: post.created,
+      updated: post.updated,
     });
 
     res.json({ ...post, id });
@@ -63,6 +69,7 @@ export const postsRouter = () => {
     await postModel.update(req.user!.id, {
       id: post.id,
       text: post.text,
+      updated: new Date(),
     });
 
     res.json(post);
