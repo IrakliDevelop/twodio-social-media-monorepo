@@ -67,8 +67,9 @@ export function authenticator(attachUser = true) {
             email: 1,
             username: 1,
             fullName: 1,
-            followsCount: "count(User.follows)",
-            followersCount: "count(User.followers)",
+            followsCount: 'count(User.follows)',
+            followersCount: 'count(User.followers)',
+            postsCount: 'count(User.posts)',
           }) as AuthenticatedUser;
 
         if (!req.user) {
