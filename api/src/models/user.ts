@@ -98,4 +98,63 @@ export class UserModel {
 
     const result = await txn.doRequest(request);
   }
+
+  async setFollow(
+    srcID: string,
+    targetUsername: string,
+    follow = true
+  ) {
+    const request = new DgraphRequest();
+
+    const query = new Query('user', 'q')
+      .func('eq(User.username, $username)')
+      .vars({
+        username: ['string', targetUsername],
+      })
+      .project({
+        targetID: 'targetID as uid',
+      });
+    request.setQuery(query.toString());
+
+    setVarsForRequest(request.getVarsMap(), query.queryVarsObj);
+
+    const mu = new Mutation();
+    mu.setCond('@if(eq(len(targetID), 1))');
+    mu[follow ? 'setSetJson' : 'setDeleteJson']([
+      {
+        'uid': srcID,
+        'User.follows': {
+          uid: 'uid(targetID)',
+        },
+      },
+      {
+        'uid': 'uid(targetID)',
+        'User.followers': {
+          uid: srcID,
+        },
+      },
+    ]);
+
+    request.addMutations(mu);
+    request.setCommitNow(true);
+
+    const txn = this.client.newTxn();
+
+    const result = await txn.doRequest(request);
+    const targetID = R.path(['q', 0, 'targetID'], result.getJson());
+
+    if (!targetID) {
+      throw Error('user_not_found');
+    }
+
+    return targetID;
+  }
+
+  async follow(srcID: string, targetUsername: string) {
+    return this.setFollow(srcID, targetUsername, true);
+  }
+
+  async unfollow(srcID: string, targetUsername: string) {
+    return this.setFollow(srcID, targetUsername, false);
+  }
 }

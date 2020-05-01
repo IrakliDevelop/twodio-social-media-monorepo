@@ -3,6 +3,7 @@ import { authenticator } from '../middlewares/authenticator';
 import { meRouter } from './me';
 import { authRouter } from './auth';
 import { postsRouter } from './posts';
+import { userRouter } from './user';
 
 export const apiRouter = () => {
   const router = Router();
@@ -12,6 +13,7 @@ export const apiRouter = () => {
   router.use(authenticator());
   router.use('/me', meRouter());
   router.use('/posts', postsRouter());
+  router.use('/user', userRouter());
 
   return router;
 };

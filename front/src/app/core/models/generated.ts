@@ -32,6 +32,8 @@ export interface User {
   username: Scalars['String'];
   fullName: Scalars['String'];
   authData?: Maybe<AuthData>;
+  follows?: Maybe<Array<User>>;
+  followers?: Maybe<Array<User>>;
   posts?: Maybe<Array<Maybe<Post>>>;
 }
 
