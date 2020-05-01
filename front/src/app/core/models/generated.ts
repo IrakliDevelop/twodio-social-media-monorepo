@@ -6,6 +6,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: Date;
 };
 
 export interface AuthData {
@@ -20,9 +21,12 @@ export interface AuthProvider {
   name: Scalars['String'];
 }
 
+
 export interface Post {
   id: Scalars['ID'];
   text?: Maybe<Scalars['String']>;
+  created: Scalars['DateTime'];
+  updated: Scalars['DateTime'];
   user: User;
 }
 

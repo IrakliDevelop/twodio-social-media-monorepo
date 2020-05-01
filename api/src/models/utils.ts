@@ -50,6 +50,8 @@ interface EdgeArgs {
   first?: number;
   offset?: number;
   after?: string;
+  orderasc?: string;
+  orderdesc?: string;
 }
 
 abstract class CommonEdge {
@@ -68,6 +70,16 @@ abstract class CommonEdge {
 
   after(after?: string) {
     this.args.after = after;
+    return this;
+  }
+
+  orderAsc(field?: string) {
+    this.args.orderasc = field;
+    return this;
+  }
+
+  orderDesc(field?: string) {
+    this.args.orderdesc = field;
     return this;
   }
 

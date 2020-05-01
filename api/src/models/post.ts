@@ -27,6 +27,8 @@ export class PostModel {
     first = 20,
     offset = 0,
     after = '',
+    orderAsc = '',
+    orderDesc = '',
     maxCount = 20,
   } = {}) {
     const query = new Query('user', queryName)
@@ -35,7 +37,9 @@ export class PostModel {
         posts: Edge.fromRaw('post', projection)
           .first(Math.min(maxCount, first))
           .offset(offset)
-          .after(after),
+          .after(after)
+          .orderAsc(orderAsc)
+          .orderDesc(orderDesc),
       })
       .vars({ userID: ['string', userID] });
 
@@ -67,6 +71,8 @@ export class PostModel {
         'dgraph.type': 'Post',
         'uid': '_:post',
         'Post.text': post.text,
+        'Post.created': post.created,
+        'Post.updated': post.updated,
         'Post.user': { uid: post.user.id },
       },
     });
@@ -107,6 +113,8 @@ export class PostModel {
         'uid': 'uid(postID)',
         'dgraph.type': 'Post',
         'Post.text': post.text,
+        'Post.created': post.created,
+        'Post.updated': post.updated,
         'Post.user': { uid: userID },
       },
     });
