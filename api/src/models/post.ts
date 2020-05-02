@@ -21,6 +21,7 @@ export const postProjections = {
     text: 1,
     created: 1,
     updated: 1,
+    likeCount: 'count(Post.likes)',
   }
 };
 
