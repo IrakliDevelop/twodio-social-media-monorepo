@@ -26,4 +26,7 @@ export class UserService {
   searchUser(username?: string): Observable<IUserSearchResponse> {
     return this.http.get<IUserSearchResponse>(`${this.URL}/api/user/search/${username}`);
   }
+  followUser(username?: string): Observable<any> {
+    return this.http.post<any>(`${this.URL}/api/user/${username}/follow`, {});
+  }
 }

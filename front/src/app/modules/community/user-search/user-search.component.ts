@@ -52,8 +52,15 @@ export class UserSearchComponent implements OnInit {
         }
         return false;
       });
-      console.log(this.users);
     });
+  }
+
+  followUser(username?: string): void {
+    if (!username) { return; }
+    this.userService.followUser(username).pipe(
+      takeUntil(this.unsubscribe$),
+      finalize(() => this.loading = false)
+    ).subscribe(res => console.log(res));
   }
 
 }
