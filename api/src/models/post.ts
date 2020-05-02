@@ -31,7 +31,7 @@ export class PostModel {
     orderDesc = '',
     maxCount = 20,
   } = {}) {
-    const query = new Query('user', queryName)
+    return new Query('user', queryName)
       .func('uid($userID)')
       .project({
         posts: Edge.fromRaw('post', projection)
@@ -41,11 +41,8 @@ export class PostModel {
           .orderAsc(orderAsc)
           .orderDesc(orderDesc),
       })
-      .vars({ userID: ['string', userID] });
-
-    return this.client
-      .newTxn()
-      .queryWithVars(query.toString(), query.queryVarsObj)
+      .vars({ userID: ['string', userID] })
+      .run(this.client)
       .then(extractPath([queryName, 0, 'posts']));
   }
 
@@ -55,11 +52,8 @@ export class PostModel {
     const query = new Query('post', queryName)
       .func('uid($id)')
       .project(projection)
-      .vars({ id: ['string', id] });
-
-    return this.client
-      .newTxn()
-      .queryWithVars(query.toString(), query.queryVarsObj)
+      .vars({ id: ['string', id] })
+      .run(this.client)
       .then(extractPath([queryName, 0]));
   }
 

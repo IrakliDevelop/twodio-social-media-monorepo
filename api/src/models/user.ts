@@ -19,36 +19,37 @@ interface UserCreateArg extends Omit<User, 'id' | 'authData'> {
 
 @injectable()
 export class UserModel {
-
   constructor(
     private client: DgraphClient
   ) { }
 
+  async runQueries(...queries: Query[]) {
+    return Query.run(this.client, ...queries);
+  }
+
+  async runQuery(query: Query) {
+    return this.runQueries(query);
+  }
+
   async fetchByID(id: string, projection: Projection, {
     queryName = 'q',
-  } = {}) {
-    const query = new Query('user', queryName)
+  } = {}): Promise<any> {
+    return new Query('user', queryName)
       .func('uid($id)')
       .project(projection)
-      .vars({ id: ['string', id] });
-
-    return this.client
-      .newTxn()
-      .queryWithVars(query.toString(), query.queryVarsObj)
-      .then(extractPath([queryName, 0]));
+      .vars({ id: ['string', id] })
+      .run(this.client)
+      .then(extractPath([queryName, 0]))
   }
 
   async fetchByAuthSub(sub: string, projection: Projection, {
     queryName = 'q',
-  } = {}) {
-    const query = new Query('authData', queryName)
+  } = {}): Promise<any> {
+    return new Query('authData', queryName)
       .func('eq(AuthData.sub, $sub)')
       .project({ user: projection })
-      .vars({ sub: ['string', sub] });
-
-    return this.client
-      .newTxn()
-      .queryWithVars(query.toString(), query.queryVarsObj)
+      .vars({ sub: ['string', sub] })
+      .run(this.client)
       .then(extractPath([queryName, 0, 'user']));
   }
 
