@@ -27,4 +27,5 @@ type Post {
   created: DateTime! @search(by: [day])
   updated: DateTime! @search(by: [day])
   user: User! @hasInverse(field: posts)
+  likes: [User!]
 }

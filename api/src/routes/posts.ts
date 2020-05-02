@@ -70,5 +70,15 @@ export const postsRouter = () => {
     res.json(post);
   });
 
+  router.put('/:id/like', async (req: Request, res: Response) => {
+    await postModel.like(req.user!.id, req.params.id);
+    res.json({ ok: true });
+  });
+
+  router.put('/:id/unlike', async (req: Request, res: Response) => {
+    await postModel.unlike(req.user!.id, req.params.id);
+    res.json({ ok: true });
+  });
+
   return router;
 };

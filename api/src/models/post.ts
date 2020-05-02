@@ -140,4 +140,26 @@ export class PostModel {
 
     return !!R.path(['q', 0, 'posts', 0, 'uid'], result.getJson());
   }
+
+  async setLike(userID: string, postID: string, flag = true) {
+    const mu = new Mutation();
+    mu[flag ? 'setSetJson' : 'setDeleteJson']({
+      'uid': postID,
+      'Post.likes': { uid: userID },
+    });
+
+    const txn = this.client.newTxn();
+    const result = await txn.mutate(mu);
+    await txn.commit();
+
+    return result.getUidsMap().get('post');
+  }
+
+  async like(userID: string, postID: string) {
+    return this.setLike(userID, postID, true);
+  }
+
+  async unlike(userID: string, postID: string) {
+    return this.setLike(userID, postID, false);
+  }
 }
