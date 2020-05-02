@@ -1,6 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { UserModel, Query } from '../../models';
+import R from 'ramda';
+import {
+  UserModel,
+  userProjections,
+  postProjections,
+  Query,
+  Edge,
+} from '../../models';
 
 export const userRouter = () => {
   const userModel = container.resolve(UserModel);
@@ -30,14 +37,7 @@ export const userRouter = () => {
       .first(10)
       .after(req.params.after)
       .vars({ term: ['string', req.params.term] })
-      .project({
-        id: 1,
-        fullName: 1,
-        username: 1,
-        followsCount: 'count(User.follows)',
-        followersCount: 'count(User.followers)',
-        postsCount: 'count(User.posts)',
-      });
+      .project(R.omit(['email'], userProjections.general));
 
     res.json(await userModel.runQueries(
       query('byUsername')

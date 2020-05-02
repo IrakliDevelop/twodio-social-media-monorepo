@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { PostModel } from '../models/post';
-import { Edge } from '../models/utils';
+import { PostModel, postProjections, Edge } from '../models';
 
 export const postsRouter = () => {
   const postModel = container.resolve(PostModel);
@@ -11,10 +10,7 @@ export const postsRouter = () => {
   router.get('/', async (req: Request, res: Response) => {
     const posts = await postModel.fetchByUserID(
       req.user && req.user.id as any,
-      {
-        id: 1,
-        text: 1,
-      },
+      postProjections.general,
       {
         first: parseInt(req.query.first),
         offset: parseInt(req.query.offset),
@@ -29,8 +25,7 @@ export const postsRouter = () => {
 
   router.get('/:id', async (req: Request, res: Response) => {
     const post = await postModel.fetchByID(req.params.id, {
-      id: 1,
-      text: 1,
+      ...postProjections.general,
       user: {
         id: 1,
       },

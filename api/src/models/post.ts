@@ -15,12 +15,30 @@ interface CreatePostArg extends Omit<Post, 'id' | 'user'> {
 }
 type UpdatePostArg = RequireOnly<Omit<Post, 'user'>, 'id'>;
 
+export const postProjections = {
+  general: {
+    id: 1,
+    text: 1,
+    created: 1,
+    updated: 1,
+  }
+};
+
 @injectable()
 export class PostModel {
 
   constructor(
     private client: DgraphClient
   ) { }
+
+  async runQueries(...queries: Query[]) {
+    return Query.run(this.client, ...queries)
+      .then(x => x.getJson());
+  }
+
+  async runQuery(query: Query) {
+    return this.runQueries(query);
+  }
 
   async fetchByUserID(userID: string, projection: Projection, {
     queryName = 'q',
@@ -30,7 +48,7 @@ export class PostModel {
     orderAsc = '',
     orderDesc = '',
     maxCount = 20,
-  } = {}) {
+  } = {}): Promise<any> {
     return new Query('user', queryName)
       .func('uid($userID)')
       .project({
@@ -48,7 +66,7 @@ export class PostModel {
 
   async fetchByID(id: string, projection: Projection, {
     queryName = 'q',
-  } = {}) {
+  } = {}): Promise<any> {
     const query = new Query('post', queryName)
       .func('uid($id)')
       .project(projection)

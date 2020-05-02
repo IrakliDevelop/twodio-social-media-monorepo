@@ -17,6 +17,18 @@ interface UserCreateArg extends Omit<User, 'id' | 'authData'> {
   };
 }
 
+export const userProjections = {
+  general: {
+    id: 1,
+    email: 1,
+    username: 1,
+    fullName: 1,
+    followsCount: 'count(User.follows)',
+    followersCount: 'count(User.followers)',
+    postsCount: 'count(User.posts)',
+  }
+};
+
 @injectable()
 export class UserModel {
   constructor(
@@ -24,7 +36,8 @@ export class UserModel {
   ) { }
 
   async runQueries(...queries: Query[]) {
-    return Query.run(this.client, ...queries);
+    return Query.run(this.client, ...queries)
+      .then(x => x.getJson());
   }
 
   async runQuery(query: Query) {
