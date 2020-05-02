@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
-import { IUser } from '@core/models/user.model';
+import {IUser, IUserSearchResponse} from '@core/models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +23,7 @@ export class UserService {
   finishRegistration(user: IUser): Observable<any> {
     return this.http.post<any>(`${this.URL}/api/auth/signup`, {...user});
   }
-  searchUser(username?: string) {
-    return this.http.get<any>(`${this.URL}/api/user/search/${username}`);
+  searchUser(username?: string): Observable<IUserSearchResponse> {
+    return this.http.get<IUserSearchResponse>(`${this.URL}/api/user/search/${username}`);
   }
 }

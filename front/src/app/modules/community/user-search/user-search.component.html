@@ -6,3 +6,9 @@
     </div>
   </div>
 </form>
+
+<ul>
+  <li *ngFor="let user of users">
+    {{user.username}} <button mat-button>follow</button>
+  </li>
+</ul>
