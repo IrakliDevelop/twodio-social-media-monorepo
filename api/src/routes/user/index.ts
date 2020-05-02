@@ -14,7 +14,21 @@ export const userRouter = () => {
 
   const router = Router();
 
-  router.post('/follow/:username', async (req: Request, res: Response) => {
+  router.get('/:username', async (req: Request, res: Response) => {
+    return res.json(
+      await userModel.runQuery(
+        new Query('user', 'user')
+        .func('eq(User.username, $username)')
+        .vars({ username: ['string', req.params.username] })
+        .project({
+          ...userProjections.general,
+          posts: new Edge('post', postProjections.general),
+        })
+      )
+      .then(R.path(['user', 0]))
+    );
+  });
+
     await userModel.follow(
       req.user!.id,
       req.params.username
