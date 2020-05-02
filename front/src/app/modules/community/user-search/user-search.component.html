@@ -1,1 +1,8 @@
-<p>user-search works!</p>
+<form>
+  <div style="width: 40%" class="input-group no-border">
+    <input type="text" [formControl]="userSearchControl" class="form-control" placeholder="Search...">
+    <div class="input-group-append">
+      <button mat-raised-button (click)="searchUser()">Search</button>
+    </div>
+  </div>
+</form>

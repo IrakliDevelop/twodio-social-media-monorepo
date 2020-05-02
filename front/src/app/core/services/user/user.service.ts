@@ -23,4 +23,7 @@ export class UserService {
   finishRegistration(user: IUser): Observable<any> {
     return this.http.post<any>(`${this.URL}/api/auth/signup`, {user});
   }
+  searchUser(username?: string) {
+    return this.http.get<any>(`${this.URL}/api/user/search/${username}`);
+  }
 }
