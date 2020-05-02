@@ -15,12 +15,30 @@ interface CreatePostArg extends Omit<Post, 'id' | 'user'> {
 }
 type UpdatePostArg = RequireOnly<Omit<Post, 'user'>, 'id'>;
 
+export const postProjections = {
+  general: {
+    id: 1,
+    text: 1,
+    created: 1,
+    updated: 1,
+  }
+};
+
 @injectable()
 export class PostModel {
 
   constructor(
     private client: DgraphClient
   ) { }
+
+  async runQueries(...queries: Query[]) {
+    return Query.run(this.client, ...queries)
+      .then(x => x.getJson());
+  }
+
+  async runQuery(query: Query) {
+    return this.runQueries(query);
+  }
 
   async fetchByUserID(userID: string, projection: Projection, {
     queryName = 'q',
@@ -30,8 +48,8 @@ export class PostModel {
     orderAsc = '',
     orderDesc = '',
     maxCount = 20,
-  } = {}) {
-    const query = new Query('user', queryName)
+  } = {}): Promise<any> {
+    return new Query('user', queryName)
       .func('uid($userID)')
       .project({
         posts: Edge.fromRaw('post', projection)
@@ -41,25 +59,19 @@ export class PostModel {
           .orderAsc(orderAsc)
           .orderDesc(orderDesc),
       })
-      .vars({ userID: ['string', userID] });
-
-    return this.client
-      .newTxn()
-      .queryWithVars(query.toString(), query.queryVarsObj)
+      .vars({ userID: ['string', userID] })
+      .run(this.client)
       .then(extractPath([queryName, 0, 'posts']));
   }
 
   async fetchByID(id: string, projection: Projection, {
     queryName = 'q',
-  } = {}) {
+  } = {}): Promise<any> {
     const query = new Query('post', queryName)
       .func('uid($id)')
       .project(projection)
-      .vars({ id: ['string', id] });
-
-    return this.client
-      .newTxn()
-      .queryWithVars(query.toString(), query.queryVarsObj)
+      .vars({ id: ['string', id] })
+      .run(this.client)
       .then(extractPath([queryName, 0]));
   }
 

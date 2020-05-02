@@ -1,8 +1,9 @@
 import * as jspb from 'google-protobuf';
+import { DgraphClient } from 'dgraph-js';
 import R from 'ramda';
 import { ObjectOrValue } from '../types';
 
-export type RawProjection = ObjectOrValue<Edge | string | boolean | 0 | 1>;
+export type RawProjection = ObjectOrValue<Edge | string | boolean | number>;
 export type Projection = Edge | RawProjection;
 export type QueryVarType = 'int' | 'float' | 'string' | 'bool';
 export type QueryVars = {
@@ -155,6 +156,33 @@ export class Query extends CommonEdge {
   private projection?: Edge;
   private queryVars?: QueryVars;
 
+  static combinedVars(...queries: Query[]) {
+    return queries.reduce((r, x) => Object.assign(r, x.queryVars), {});
+  }
+
+  static run(client: DgraphClient, ...queries: Query[]) {
+    const vars = Query.combinedVars(...queries);
+    const hasVars = !!Object.keys(vars).length;
+    queries.forEach(x => x.vars({}));
+
+    const varsQuery = new Query('', '').vars(vars);
+    const queryStr = [
+      (hasVars && `query combined(${varsQuery.varsStr}) `) + '{',
+      ...queries.map(x => x.toString().slice(2, -2)),
+      '}',
+    ].join('\n');
+
+    const txn = client.newTxn();
+
+    return (() => {
+      if (hasVars) {
+        return txn.queryWithVars(queryStr, varsQuery.queryVarsObj)
+      } else {
+        return txn.query(queryStr);
+      }
+    })();
+  }
+
   constructor(
     private rootType: string,
     private queryName: string
@@ -208,6 +236,10 @@ export class Query extends CommonEdge {
         r['$' + key] = val;
         return r;
       }, {} as Record<string, any>);
+  }
+
+  run(client: DgraphClient) {
+    return Query.run(client, this);
   }
 
   toString(): string {
