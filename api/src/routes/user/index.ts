@@ -59,7 +59,7 @@ export const userRouter = () => {
         .func('match(User.username, $term, 3)'),
       query('byFullName')
         .func('match(User.fullName, $term, 16)')
-    ).then(x => x.getJson()));
+    ));
   });
 
   return router;
