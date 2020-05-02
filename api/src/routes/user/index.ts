@@ -29,6 +29,7 @@ export const userRouter = () => {
     );
   });
 
+  router.post('/:username/follow', async (req: Request, res: Response) => {
     await userModel.follow(
       req.user!.id,
       req.params.username
@@ -37,7 +38,7 @@ export const userRouter = () => {
     res.json({ ok: true });
   });
 
-  router.post('/unfollow/:username', async (req: Request, res: Response) => {
+  router.post('/:username/unfollow', async (req: Request, res: Response) => {
     await userModel.unfollow(
       req.user!.id,
       req.params.username
