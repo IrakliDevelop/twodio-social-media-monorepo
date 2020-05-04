@@ -155,6 +155,7 @@ export class Query extends CommonEdge {
   private queryFunc?: string;
   private projection?: Edge;
   private queryVars?: QueryVars;
+  private isVar: boolean = false;
 
   static combinedVars(...queries: Query[]) {
     return queries.reduce((r, x) => Object.assign(r, x.queryVars), {});
@@ -185,9 +186,14 @@ export class Query extends CommonEdge {
 
   constructor(
     private rootType: string,
-    private queryName: string
+    private queryName: string = 'q'
   ) {
     super();
+  }
+
+  asVar() {
+    this.isVar = true;
+    return this;
   }
 
   func(func: string) {
@@ -211,6 +217,15 @@ export class Query extends CommonEdge {
       .join(', ');
   }
 
+  private get queryNameStr() {
+    if (this.isVar && this.queryName !== 'q')
+      return `${this.queryName} as var`;
+    else if (this.isVar)
+      return 'var';
+    else
+      return this.queryName || 'q';
+  }
+
   private buildQueryStr(extraDepth = 0) {
     const fields = (this.projection as Edge).toString(extraDepth);
     const indent = indenter(extraDepth);
@@ -219,7 +234,7 @@ export class Query extends CommonEdge {
       this.argsStr(),
     ].filter(x => x).join(', ');
 
-    return indent(`${this.queryName}(${funcFullStr}) {\n`)
+    return indent(`${this.queryNameStr}(${funcFullStr}) {\n`)
                 + `${fields}\n${indent('}')}`;
   }
 
