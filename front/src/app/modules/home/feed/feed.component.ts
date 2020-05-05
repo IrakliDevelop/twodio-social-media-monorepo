@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {finalize, takeUntil} from 'rxjs/operators';
-import {PostsService} from '@core/services';
+import {PostsService, WsService} from '@core/services';
 import {IPost} from '@core/models';
 import {Subject} from 'rxjs';
 
@@ -25,12 +25,16 @@ export class FeedComponent implements OnInit {
   allPostsLoading: boolean;
 
   constructor(
+    private wsService: WsService,
     private postsService: PostsService,
     private fb: FormBuilder
   ) {
   }
 
   ngOnInit() {
+    this.wsService.event$.subscribe(({event, data}) =>{
+      console.log({event, data})
+    })
     this.unsubscribe$ = new Subject<void>();
     this.posts = [];
     this.postForm = this.fb.group({

@@ -7,7 +7,7 @@ import Storage from '@aws-amplify/storage';
 import Interactions from '@aws-amplify/interactions';
 
 import { AuthGuard } from './guards';
-import { AuthService, AuthServiceFactory } from './services';
+import { AuthService, AuthServiceFactory, WsService } from './services';
 import { AuthInterceptorService } from './utils';
 import { throwIfAlreadyLoaded } from './throw-if-already-loaded';
 
@@ -15,6 +15,7 @@ import { throwIfAlreadyLoaded } from './throw-if-already-loaded';
 const PROVIDERS = [
   AuthGuard,
   AuthService,
+  WsService,
   { provide: APP_INITIALIZER, useFactory: AuthServiceFactory, deps: [AuthService], multi: true },
   {
     provide: HTTP_INTERCEPTORS,

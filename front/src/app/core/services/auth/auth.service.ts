@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable } from 'rxjs';
+import { pluck } from 'rxjs/operators';
 import { AmplifyService } from 'aws-amplify-angular';
 import Amplify from '@aws-amplify/core';
 import { AuthState } from 'aws-amplify-angular/src/providers/auth.state';
@@ -20,6 +21,7 @@ const SESSION_INITIAL: AuthState = {
 @Injectable()
 export class AuthService extends AuthData {
   currentSession$: BehaviorSubject<AuthState> = new BehaviorSubject(SESSION_INITIAL);
+  authToken$ = this.currentSession$.pipe(pluck('user', 'signInUserSession', 'idToken', 'jwtToken'));
   constructor(private amplifyService: AmplifyService) {
     super();
   }

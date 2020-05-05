@@ -36,6 +36,16 @@ export function cognitoAuthenticator(
       jwksUri: `${issuer}/.well-known/jwks.json`,
     }),
     userProperty: 'cognitoUser',
+    getToken: req => {
+      if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+          return req.headers.authorization.split(' ')[1];
+      }
+      // only use jwt token from cookie for websocket upgrade
+      else if ((req as any).upgrade && req.cookies['id-token']) {
+        return req.cookies['id-token'];
+      }
+      return null;
+    },
     ...expressJwtOptions,
   });
 }

@@ -42,13 +42,13 @@ subscriber.on('pmessage', (pattern, channel, msg) => {
   const msgType = R.last(channel.split('/')) as string;
 
   subMap.getWsList(pattern)
-    .forEach(ws => handleMessage(ws, msgType, JSON.parse(msg)));
+    .forEach(ws => handleMessage(ws, msgType, msg));
 });
 
-function handleMessage(ws: WebSocket.WebSocket, msgType: string, msg: any) {
+function handleMessage(ws: WebSocket.WebSocket, msgType: string, msg: string) {
   ws.send(JSON.stringify({
     event: msgType,
-    data: msg,
+    data: JSON.parse(msg),
   }));
 }
 
