@@ -34,7 +34,7 @@ export const userProjections = {
     followsCount: 'count(User.follows)',
     followersCount: 'count(User.followers)',
     postsCount: 'count(User.posts)',
-  }
+  },
 };
 
 @injectable()

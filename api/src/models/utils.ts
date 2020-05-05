@@ -155,7 +155,7 @@ export class Query extends CommonEdge {
   private queryFunc?: string;
   private projection?: Edge;
   private queryVars?: QueryVars;
-  private isVar: boolean = false;
+  private isVar = false;
 
   static combinedVars(...queries: Query[]) {
     return queries.reduce((r, x) => Object.assign(r, x.queryVars), {});

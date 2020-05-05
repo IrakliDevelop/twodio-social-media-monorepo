@@ -25,7 +25,7 @@ export const feedRouter = () => {
             posts: new Edge('post', {
               id: 'followsPostIDs as uid',
             }),
-          })
+          }),
         }),
       new Query('post', 'posts')
         .func('uid(userPostIDs, followsPostIDs)')
