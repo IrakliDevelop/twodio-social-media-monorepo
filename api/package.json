@@ -19,6 +19,7 @@
     "@types/express-jwt": "0.0.42",
     "@types/node": "^13.9.1",
     "@types/ramda": "^0.27.3",
+    "@types/redis": "^2.8.18",
     "nodemon": "^2.0.2",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"
@@ -35,6 +36,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^1.7.0",
     "ramda": "^0.27.0",
+    "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "ts-node-dev": "^1.0.0-pre.44",
     "tsyringe": "^4.1.0"

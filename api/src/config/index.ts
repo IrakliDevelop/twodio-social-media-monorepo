@@ -24,6 +24,11 @@ export default {
   db: {
     url: notNullEnv('DATABASE_URL'),
   },
+  redis: {
+    host: env.REDIS_HOST || 'localhost',
+    port: env.REDIS_PORT || 6379,
+    password: notNullEnv('REDIS_PASSWORD'),
+  },
   auth: {
     cognito: {
       poolId: notNullEnv('COGNITO_POOL_ID'),
