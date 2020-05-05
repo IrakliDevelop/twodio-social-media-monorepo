@@ -25,8 +25,8 @@
     "@graphql-codegen/typescript-apollo-angular": "1.13.1",
     "@graphql-codegen/typescript-operations": "1.13.1",
     "graphql": "^14.6.0",
-    "tasksfile": "^5.1.0",
-    "yaml": "^1.8.3"
+    "tasksfile": "^5.1.1",
+    "yaml": "^1.9.2"
   },
   "dependencies": {
     "@types/superagent": "^4.1.7",
