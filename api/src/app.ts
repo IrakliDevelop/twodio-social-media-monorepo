@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import './database';
 import express, { Express } from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import errorHandler from './middlewares/error-handler';
 
 import config from './config';
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 app.get('/', (_, res) => res.json({ ok: true }));
+app.use(morgan('combined'));
 app.use('/api', apiRouter());
 app.use(errorHandler());
 
