@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { config } from 'dotenv';
 
-config({ path: resolve(__dirname, '../../.env' )});
+config({ path: resolve(__dirname, '../../../.env' )});
 
 const root = resolve(__dirname, '../../');
 const env = process.env;
