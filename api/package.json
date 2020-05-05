@@ -21,6 +21,7 @@
     "@types/node": "^13.9.1",
     "@types/ramda": "^0.27.3",
     "@types/redis": "^2.8.18",
+    "@types/ws": "^7.2.4",
     "nodemon": "^2.0.2",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"
@@ -40,7 +41,9 @@
     "ramda": "^0.27.0",
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
+    "tiny-typed-emitter": "^2.0.1",
     "ts-node-dev": "^1.0.0-pre.44",
-    "tsyringe": "^4.1.0"
+    "tsyringe": "^4.1.0",
+    "ws": "^7.2.5"
   }
 }
