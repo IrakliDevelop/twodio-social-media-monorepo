@@ -5,7 +5,7 @@ import { expressJwtSecret } from 'jwks-rsa';
 import config from '../config';
 import { AuthenticatedUser, CognitoUser } from '../types';
 import { container } from 'tsyringe';
-import { UserModel } from '../models';
+import { UserModel, userProjections } from '../models';
 import { SignupRequiredError } from '../errors/signupRequiredError';
 
 declare global {
