@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { PostModel, postProjections, Edge } from '../models';
+import R from 'ramda';
+import { PostModel, postProjections, Edge, userProjections } from '../models';
 
 export const postsRouter = () => {
   const postModel = container.resolve(PostModel);

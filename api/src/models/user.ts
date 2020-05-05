@@ -18,6 +18,14 @@ interface UserCreateArg extends Omit<User, 'id' | 'authData'> {
 }
 
 export const userProjections = {
+  public: {
+    id: 1,
+    username: 1,
+    fullName: 1,
+    followsCount: 'count(User.follows)',
+    followersCount: 'count(User.followers)',
+    postsCount: 'count(User.posts)',
+  },
   general: {
     id: 1,
     email: 1,

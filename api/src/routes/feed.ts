@@ -36,7 +36,7 @@ export const feedRouter = () => {
         .project({
           ...postProjections.general,
           user: {
-            ...userProjections.general
+            ...userProjections.public,
           },
         })
     );

@@ -54,23 +54,11 @@ export function authenticator(attachUser = true) {
     cognitoAuth,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        if (!req.cognitoUser) {
-          throw new jwt.UnauthorizedError(
-            'credentials_required',
-            { message:'Unauthorized' }
-          );
-        }
-
         req.user = await container.resolve(UserModel)
-          .fetchByAuthSub(req.cognitoUser.sub, {
-            id: 1,
-            email: 1,
-            username: 1,
-            fullName: 1,
-            followsCount: 'count(User.follows)',
-            followersCount: 'count(User.followers)',
-            postsCount: 'count(User.posts)',
-          }) as AuthenticatedUser;
+          .fetchByAuthSub(
+            req.cognitoUser!.sub,
+            userProjections.general
+          ) as AuthenticatedUser;
 
         if (!req.user) {
           throw new SignupRequiredError();
