@@ -53,6 +53,14 @@ export const postsRouter = () => {
       updated: post.updated,
     });
 
+    res.notify('post-add', {
+      post: {
+        ...post,
+        id,
+      },
+      user: R.pick(Object.keys(userProjections.public), req.user),
+    });
+
     res.json({ ...post, id });
   });
 
@@ -68,16 +76,23 @@ export const postsRouter = () => {
       updated: new Date(),
     });
 
+    res.notify('post-edit', {
+      post,
+      user: R.pick(Object.keys(userProjections.public), req.user),
+    });
+
     res.json(post);
   });
 
   router.put('/:id/like', async (req: Request, res: Response) => {
     await postModel.like(req.user!.id, req.params.id);
+    res.notify('post-like', { post: { id: req.params.id } });
     res.json({ ok: true });
   });
 
   router.put('/:id/unlike', async (req: Request, res: Response) => {
     await postModel.unlike(req.user!.id, req.params.id);
+    res.notify('post-unlike', { post: { id: req.params.id } });
     res.json({ ok: true });
   });
 
