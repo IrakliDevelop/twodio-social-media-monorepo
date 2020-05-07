@@ -1,6 +1,7 @@
 # twodio-social-media-monorepo
 
-To run in development:
-1. docker-compose run graph-db (if you have run docker daemon with sudo, then this command will also require sudo)
-2. npx task deploy db
-3. move to front and api directories and run npm install && npm start
+## Usage
+  1. fire everything up:
+    development version: `npm run dev`
+    production version: `npm run prod`
+  2. deploy schema to database: `npx task deploy db`
