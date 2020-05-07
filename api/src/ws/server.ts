@@ -33,7 +33,9 @@ wss.on('connection', async (ws) => {
     .map(x => `user:${x}/*`)
     .filter(x => subMap.add(ws, x));
 
-  subscriber.psubscribe(newSubs);
+  if (newSubs.length) {
+    subscriber.psubscribe(newSubs);
+  }
 
   ws.once('close', () => subMap.deleteWs(ws));
 });
