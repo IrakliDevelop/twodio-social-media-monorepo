@@ -5,7 +5,9 @@
   "main": "tasksfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "task": "node ./tasksfile.js"
+    "task": "node ./tasksfile.js",
+    "dev": "docker-compose -f ./docker-compose.yml -f ./docker-compose.dev.yml --env-file ./.env up --build",
+    "prod": "docker-compose -f ./docker-compose.yml --env-file ./.env up --build"
   },
   "repository": {
     "type": "git",

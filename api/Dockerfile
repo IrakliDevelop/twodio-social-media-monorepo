@@ -1,20 +1,26 @@
-FROM node:12.16.1
+#### INIT
+FROM node:12.16.1 as init
 
-# Create app directory
-
-WORKDIR /usr/src/app
-
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
-
-RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
-
-# Bundle app source
+WORKDIR /app
 COPY . .
 
+#### BUILD
+FROM init as build
+
+RUN npm install
+RUN npm run build
+
+#### PROD
+FROM init as prod
+
+# copy build artifacts from 'build' stage
+COPY --from=build /app/dist ./dist
+RUN npm install --production
 EXPOSE 3000
-CMD [ "npm", "serve" ]
+CMD echo "running Api in prod environment" && npm run serve
+
+#### DEV
+FROM init as dev
+
+EXPOSE 3000
+CMD echo "running Api in dev environment" && npm run start:watch

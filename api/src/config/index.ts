@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { config } from 'dotenv';
 
-config({ path: resolve(__dirname, '../../../.env' )});
+config({ path: resolve(__dirname, '../../.env' )});
 
 const root = resolve(__dirname, '../../');
 const env = process.env;
@@ -22,11 +22,12 @@ export default {
     enableCors: !!env.ENABLE_CORS,
   },
   db: {
-    url: notNullEnv('DATABASE_URL'),
+    host: notNullEnv('DATABASE_HOST'),
+    port: parseInt(env.DATABASE_PORT || '') || 9080,
   },
   redis: {
     host: env.REDIS_HOST || 'localhost',
-    port: env.REDIS_PORT || 6379,
+    port: parseInt(env.REDIS_PORT || '') || 6379,
     password: notNullEnv('REDIS_PASSWORD'),
   },
   auth: {

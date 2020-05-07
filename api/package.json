@@ -4,8 +4,10 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
+    "build": "npm run build-ts",
     "build-ts": "tsc",
-    "start": "npm run serve",
+    "start": "ts-node src/app.ts",
+    "start:watch": "ts-node-dev src/app.ts",
     "serve": "node dist/app.js",
     "watch-node": "nodemon dist/app.js",
     "watch-ts": "tsc -w"
@@ -24,6 +26,8 @@
     "@types/redis": "^2.8.18",
     "@types/ws": "^7.2.4",
     "nodemon": "^2.0.2",
+    "ts-node": "^8.10.1",
+    "ts-node-dev": "^1.0.0-pre.44",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"
   },
@@ -44,7 +48,6 @@
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "tiny-typed-emitter": "^2.0.1",
-    "ts-node-dev": "^1.0.0-pre.44",
     "tsyringe": "^4.1.0",
     "ws": "^7.2.5"
   }

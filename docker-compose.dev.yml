@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  api:
+    build:
+      target: dev
+    volumes:
+      - ./api:/app
+  client:
+    build:
+      target: dev
+    ports:
+      - 4200:4200
+    volumes:
+      - ./front:/app
+  zero:
+    volumes:
+      - /tmp/data:/dgraph
+  alpha:
+    volumes:
+      - /tmp/data:/dgraph
