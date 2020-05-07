@@ -25,6 +25,7 @@ async function findFollowsIDs(userID: string): Promise<string[]> {
 
 const wss = new WebSocket.Server({ noServer: true });
 const subMap = new SubMap<WebSocket.WebSocket>();
+subMap.on('delete_sub', sub => subscriber.punsubscribe(sub));
 
 wss.on('connection', async (ws) => {
   const follows = await findFollowsIDs(ws.user.id);
@@ -35,7 +36,6 @@ wss.on('connection', async (ws) => {
   subscriber.psubscribe(newSubs);
 
   ws.once('close', () => subMap.deleteWs(ws));
-  subMap.on('delete_sub', sub => subscriber.punsubscribe(sub));
 });
 
 subscriber.on('pmessage', (pattern, channel, msg) => {
