@@ -15,7 +15,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   signInForm: FormGroup;
   error$: BehaviorSubject<any | null>;
   unsubscribe$: Subject<void>;
-  private loading: boolean;
+  loading: boolean;
 
   constructor(public fb: FormBuilder,
               private authService: AuthService,

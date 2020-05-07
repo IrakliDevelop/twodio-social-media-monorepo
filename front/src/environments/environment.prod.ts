@@ -1,5 +1,7 @@
 export const environment = {
   production: true,
+  ApiUrl: 'http://api:3000',
+  wsUrl: 'ws://api:3000',
   amplify: {
     Auth: {
       // identityPoolId: '',
