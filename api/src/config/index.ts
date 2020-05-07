@@ -18,7 +18,7 @@ export default {
   isLambda: !!(env.LAMBDA_TASK_ROOT && env.AWS_EXECUTION_ENV),
   server: {
     port: env.SERVER_PORT || 3000,
-    env: env.SERVER_ENV || 'dev',
+    env: env.ENV || 'dev',
     enableCors: !!env.ENABLE_CORS,
   },
   db: {
