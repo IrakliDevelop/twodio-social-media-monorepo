@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import * as R from 'ramda';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '@core/services';
 
 import { environment } from '../../../../environments/environment';
 import { filter, first } from 'rxjs/operators';
@@ -24,12 +24,12 @@ export class WsService {
 
   constructor(
     private cookieService: CookieService,
-    private authService: AuthService,
+    private authService: AuthService
   ) {
     this.authService.authToken$.subscribe((token?: string) => {
-      if (token) return this.initWs(token);
+      if (token) { return this.initWs(token); }
 
-      if (this.ws) this.ws.close();
+      if (this.ws) { this.ws.close(); }
       this.ws = undefined;
       this.setConnected(false);
     });
