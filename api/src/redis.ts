@@ -4,7 +4,7 @@ import config from './config';
 
 const createRedisClient = () => createClient({
   host: config.redis.host,
-  port: config.redis.port,
+  port: Number(config.redis.port),
   password: config.redis.password,
   connect_timeout: 30000,
 });
