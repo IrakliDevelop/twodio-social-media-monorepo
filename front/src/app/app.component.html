@@ -1,6 +1,6 @@
 <div class="wrapper">
-  <div class="sidebar" data-color="white" data-active-color="danger">
-    <app-sidebar *ngIf="isAuthenticated" ></app-sidebar>
+  <div *ngIf="isAuthenticated" class="sidebar" data-color="white" data-active-color="danger">
+    <app-sidebar></app-sidebar>
   </div>
   <div class="main-panel">
     <app-header *ngIf="isAuthenticated"></app-header>
