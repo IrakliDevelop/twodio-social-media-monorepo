@@ -61,6 +61,7 @@ export function authenticator(attachUser = true) {
   }
 
   return compose(
+    // @ts-ignore
     cognitoAuth,
     async (req: Request, res: Response, next: NextFunction) => {
       try {

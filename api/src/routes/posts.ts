@@ -13,9 +13,9 @@ export const postsRouter = () => {
       req.user && req.user.id as any,
       postProjections.general,
       {
-        first: parseInt(req.query.first),
-        offset: parseInt(req.query.offset),
-        after: req.query.after,
+        first: parseInt(req.query.first as string),
+        offset: parseInt(req.query.offset as string),
+        after: req.query.after as string,
         orderDesc: 'Post.created',
       }
     );

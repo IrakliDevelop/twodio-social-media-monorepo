@@ -30,9 +30,9 @@ export const feedRouter = () => {
       new Query('post', 'posts')
         .func('uid(userPostIDs, followsPostIDs)')
         .orderDesc('Post.created')
-        .first(Math.min(parseInt(req.query.first) || 15, 15))
-        .offset(parseInt(req.query.offset))
-        .after(req.query.after)
+        .first(Math.min(parseInt(req.query.first as string) || 15, 15))
+        .offset(parseInt(req.query.offset as string))
+        .after(req.query.after as string)
         .project({
           ...postProjections.general,
           user: {

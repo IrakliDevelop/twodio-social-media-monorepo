@@ -32,9 +32,10 @@ if (!config.isLambda) {
 
   server.on('upgrade', async (req, socket, head) => {
     compose(
+       // @ts-ignore
       cookieParser(),
       authenticator()
-    )(req, {} as any, (err) => {
+    )(req, {} as any, (err: any) => {
       if (err) return socket.destroy();
       handleUpgrade(req, socket, head);
     });
