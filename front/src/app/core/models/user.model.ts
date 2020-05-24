@@ -4,7 +4,7 @@ export interface IUser {
   username?: string;
   fullName?: string;
   followsCount?: number;
-  followerCount?: number;
+  followersCount?: number;
   postsCount?: number;
 }
 
