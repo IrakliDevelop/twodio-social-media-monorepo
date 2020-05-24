@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
-import * as R from 'ramda';
-import { AuthService } from '@core/services';
+import { AuthService } from '@core/services/auth/auth.service'; // use long import to avoid circular dependency
 
 import { environment } from '../../../../environments/environment';
 import { filter, first } from 'rxjs/operators';
