@@ -9,6 +9,6 @@
 
 <ul>
   <li *ngFor="let user of users">
-    {{user.username}} <button mat-button (click)="followUser(user.username)">follow</button>
+    <a href="javascript:void(0)" (click)="getUserDetails(user)">{{user.username}}</a> <button mat-button (click)="followUser(user.username)">follow</button>
   </li>
 </ul>

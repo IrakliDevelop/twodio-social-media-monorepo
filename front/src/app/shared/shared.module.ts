@@ -5,9 +5,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from './material.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {NgxLoadingModule} from 'ngx-loading';
-import {HeaderComponent} from '@shared/components';
-import {FooterComponent} from '@shared/components';
-import {SidebarComponent} from './components/sidebar/sidebar.component';
+import {HeaderComponent,
+  FooterComponent,
+  SidebarComponent,
+  UserInfoModalComponent} from '@shared/components';
 
 
 const SHARED_MODULES = [
@@ -19,7 +20,10 @@ const SHARED_MODULES = [
 ];
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, SidebarComponent],
+  declarations: [HeaderComponent,
+    FooterComponent,
+    SidebarComponent,
+    UserInfoModalComponent],
   imports: [
     CommonModule,
     ...SHARED_MODULES,
@@ -29,6 +33,9 @@ const SHARED_MODULES = [
     ...SHARED_MODULES,
     HeaderComponent,
     SidebarComponent,
+  ],
+  entryComponents: [
+    UserInfoModalComponent,
   ],
 })
 export class SharedModule {

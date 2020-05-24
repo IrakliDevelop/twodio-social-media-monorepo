@@ -19,7 +19,6 @@ export class UserService {
   fetchUserData(): Observable<any> {
     return this.http.get<any>(`${this.URL}/api/me`);
   }
-
   finishRegistration(user: IUser): Observable<any> {
     return this.http.post<any>(`${this.URL}/api/auth/signup`, {...user});
   }
@@ -28,5 +27,8 @@ export class UserService {
   }
   followUser(username?: string): Observable<any> {
     return this.http.post<any>(`${this.URL}/api/user/${username}/follow`, {});
+  }
+  getUserInfoByUsername(username?: string): Observable<any> {
+    return this.http.get<any>(`${this.URL}/api/user/${username}`);
   }
 }

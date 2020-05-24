@@ -32,9 +32,9 @@ export class FeedComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.wsService.event$.subscribe(({event, data}) =>{
-      console.log({event, data})
-    })
+    this.wsService.event$.subscribe(({event, data}) => {
+      console.log({event, data});
+    });
     this.unsubscribe$ = new Subject<void>();
     this.posts = [];
     this.postForm = this.fb.group({
