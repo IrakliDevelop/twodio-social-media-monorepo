@@ -8,10 +8,12 @@ const routes: Routes = [
   {
     path: '',
     component: DashboardComponent,
+    data: { title: 'home' },
   },
   {
     path: 'feed',
     component: FeedComponent,
+    data: { title: 'feed' },
   },
 ];
 
