@@ -1,5 +1,5 @@
 <form>
-  <div style="width: 40%" class="input-group no-border">
+  <div style="width: 40%" class="input-group form-group no-border">
     <input type="text" [formControl]="userSearchControl" class="form-control" placeholder="Search...">
     <div class="input-group-append">
       <button mat-raised-button (click)="searchUser()">Search</button>
@@ -12,3 +12,4 @@
     <a href="javascript:void(0)" (click)="getUserDetails(user)">{{user.username}}</a> <button mat-button (click)="followUser(user.username)">follow</button>
   </li>
 </ul>
+<!-- TODO: div of cards -->

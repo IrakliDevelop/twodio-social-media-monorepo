@@ -1,15 +1,25 @@
 <form [formGroup]="postForm">
   <ngx-loading [show]="singlePostLoading"></ngx-loading>
-  <textarea formControlName="text"></textarea>
-  <button mat-raised-button (click)="addNewPost()">Post</button>
+  <div class="form-group mb-2">
+    <textarea class="form-control mb-2" formControlName="text" placeholder="what are your thoughts?"></textarea>
+    <button class="btn btn-primary mb-2" (click)="addNewPost()">Post</button>
+  </div>
 </form>
 
 <div>
   <h3>Posts</h3>
-  <ul>
-    <ngx-loading [show]="allPostsLoading"></ngx-loading>
-    <li *ngFor="let post of posts">
-      {{post.text}}
-    </li>
-  </ul>
+  <ngx-loading [show]="allPostsLoading"></ngx-loading>
+  <ng-container *ngFor="let post of posts">
+    <div class="card">
+<!--      <div class="card-header">-->
+<!--        Author goes here-->
+<!--      </div>-->
+      <div class="card-body">
+        <p>{{post.text}}</p>
+      </div>
+      <div class="card-footer text-muted">
+        {{post.created}}
+      </div>
+    </div>
+  </ng-container>
 </div>
