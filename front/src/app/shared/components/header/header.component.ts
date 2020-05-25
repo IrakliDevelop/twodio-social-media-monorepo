@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '@core/services';
 
 @Component({
@@ -18,6 +18,7 @@ export class HeaderComponent implements OnInit {
   constructor(private renderer: Renderer2,
               private element: ElementRef,
               private router: Router,
+              private route: ActivatedRoute,
               private authService: AuthService) {
     this.nativeElement = element.nativeElement;
     this.sidebarVisible = false;
@@ -28,7 +29,7 @@ export class HeaderComponent implements OnInit {
 
   getTitle(): string {
     // TODO: dynamically change title depending on route
-    return 'Dashboard';
+    return this.route.snapshot.data.title;
   }
 
   sidebarToggle() {
