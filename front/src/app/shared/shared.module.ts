@@ -29,11 +29,12 @@ const SHARED_MODULES = [
     ...SHARED_MODULES,
     RouterModule,
   ],
-  exports: [
-    ...SHARED_MODULES,
-    HeaderComponent,
-    SidebarComponent,
-  ],
+    exports: [
+        ...SHARED_MODULES,
+        HeaderComponent,
+        SidebarComponent,
+        UserInfoComponent,
+    ],
   entryComponents: [
     UserInfoComponent,
   ],

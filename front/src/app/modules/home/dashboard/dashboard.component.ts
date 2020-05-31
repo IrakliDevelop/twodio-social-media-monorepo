@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { catchError, finalize, first } from 'rxjs/operators';
 
 import { UserService } from '@core/services/user/user.service';
+import { IUser } from '@core/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,8 @@ import { UserService } from '@core/services/user/user.service';
 })
 export class DashboardComponent implements OnInit {
   private loading: boolean;
+  userExists: boolean;
+  user: IUser;
 
   constructor(
     private userService: UserService,
@@ -25,6 +28,7 @@ export class DashboardComponent implements OnInit {
 
   private _loadUser(): any {
     this.loading = true;
+    this.userExists = false;
     this.userService.fetchUserData().pipe(
       first(),
       catchError((err) => {
@@ -32,15 +36,17 @@ export class DashboardComponent implements OnInit {
       }),
       finalize(() => this.loading = false)
     ).subscribe(data => {
-      console.log(data);
       if (data.error) {
         if (data.status === 401) {
           console.log(data);
-          // todo: redirect to setup
           this.router.navigate(['login/setup']);
         }
-        console.log('aaa');
+        console.error(data);
       }
+      // user exists. display information and fetch posts;
+      this.userExists = true;
+      this.user = data;
+      console.log(this.user);
     });
   }
 

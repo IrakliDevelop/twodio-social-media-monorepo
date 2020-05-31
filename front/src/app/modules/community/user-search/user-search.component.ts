@@ -71,6 +71,7 @@ export class UserSearchComponent implements OnInit {
   getUserDetails(user?: IUser): void {
     const modal = this.modalService.open(UserInfoComponent, {size: 'lg', backdrop: 'static', keyboard: false});
     modal.componentInstance.user = user;
+    modal.componentInstance.isOwn = false;
     modal.result.then(result => console.log(result)
       , reason => console.log(reason));
   }
