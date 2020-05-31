@@ -8,7 +8,7 @@ import {NgxLoadingModule} from 'ngx-loading';
 import {HeaderComponent,
   FooterComponent,
   SidebarComponent,
-  UserInfoModalComponent} from '@shared/components';
+  UserInfoComponent} from '@shared/components';
 
 
 const SHARED_MODULES = [
@@ -23,7 +23,7 @@ const SHARED_MODULES = [
   declarations: [HeaderComponent,
     FooterComponent,
     SidebarComponent,
-    UserInfoModalComponent],
+    UserInfoComponent],
   imports: [
     CommonModule,
     ...SHARED_MODULES,
@@ -35,7 +35,7 @@ const SHARED_MODULES = [
     SidebarComponent,
   ],
   entryComponents: [
-    UserInfoModalComponent,
+    UserInfoComponent,
   ],
 })
 export class SharedModule {

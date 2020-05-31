@@ -5,10 +5,10 @@ import { IUser } from '@core/models';
 
 @Component({
   selector: 'app-user-info-modal',
-  templateUrl: './user-info-modal.component.html',
-  styleUrls: ['./user-info-modal.component.scss'],
+  templateUrl: './user-info.component.html',
+  styleUrls: ['./user-info.component.scss'],
 })
-export class UserInfoModalComponent implements OnInit {
+export class UserInfoComponent implements OnInit {
   @Input() user: IUser;
   constructor(
     public modalRef: NgbActiveModal
