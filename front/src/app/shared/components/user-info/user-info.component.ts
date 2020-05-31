@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 import { IUser } from '@core/models';
 
@@ -12,7 +11,6 @@ export class UserInfoComponent implements OnInit {
   @Input() user: IUser;
   @Input() isOwn: boolean;
   constructor(
-    public modalRef: NgbActiveModal
   ) { }
 
   ngOnInit() {
