@@ -2,3 +2,4 @@ export * from './header/header.component';
 export * from './footer/footer.component';
 export * from './sidebar/sidebar.component';
 export * from './user-info/user-info.component';
+export * from './post-preview/post-preview.component';
