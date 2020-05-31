@@ -46,7 +46,7 @@ export class FeedComponent implements OnInit {
 
   loadPosts(limit: number, offset: number, after?: string) {
     this.allPostsLoading = true;
-    this.postsService.getPosts(limit, offset, after).pipe(
+    this.postsService.getMyPosts(limit, offset, after).pipe(
       takeUntil(this.unsubscribe$),
       finalize(() => this.allPostsLoading = false)
     ).subscribe((res: IPost[]) => {

@@ -14,7 +14,7 @@ export class PostsService {
   ) {
   }
 
-  getPosts(first?: number, offset?: number, after?: string): Observable<any> {
+  getMyPosts(first?: number, offset?: number, after?: string): Observable<any> {
     return this.http.get<any>(`${this.URL}/api/posts`, {
       params: {
         first: first.toString(),
