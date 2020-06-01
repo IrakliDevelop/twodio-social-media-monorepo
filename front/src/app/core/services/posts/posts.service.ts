@@ -14,6 +14,16 @@ export class PostsService {
   ) {
   }
 
+  getFeed(first?: number, offset?: number, after?: string): Observable<any> {
+    return this.http.get<any>(`${this.URL}/api/feed`, {
+      params: {
+        first: first.toString(),
+        offset: offset.toString(),
+        after: after ? after : '',
+      },
+    });
+  }
+
   getMyPosts(first?: number, offset?: number, after?: string): Observable<any> {
     return this.http.get<any>(`${this.URL}/api/posts`, {
       params: {
