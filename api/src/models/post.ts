@@ -148,6 +148,30 @@ export class PostModel {
     return !!R.path(['q', 0, 'posts', 0, 'uid'], result.getJson());
   }
 
+  async fetchComments(postID: string, projection: Projection, {
+    queryName = 'q',
+    first = 20,
+    offset = 0,
+    after = '',
+    orderAsc = '',
+    orderDesc = '',
+    maxCount = 20,
+  } = {}): Promise<any> {
+    return new Query('post', queryName)
+      .func('uid($postID)')
+      .project({
+        children: Edge.fromRaw('post', projection)
+          .first(Math.min(maxCount, first))
+          .offset(offset)
+          .after(after)
+          .orderAsc(orderAsc)
+          .orderDesc(orderDesc),
+      })
+      .vars({ postID: ['string', postID] })
+      .run(this.client)
+      .then(extractPath([queryName, 0, 'children']));
+  }
+
   async addComment(comment: AddCommentArg) {
     const mu = new Mutation();
     mu.setSetJson({

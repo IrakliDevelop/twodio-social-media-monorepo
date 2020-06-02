@@ -35,6 +35,24 @@ export const postsRouter = () => {
     res.json(post || null);
   });
 
+  router.get('/:id/comments', async (req: Request, res: Response) => {
+    const comments = await postModel.fetchComments(
+      req.params.id,
+      {
+        ...postProjections.general,
+        user: userProjections.public,
+      },
+      {
+        first: parseInt(req.query.first as string),
+        offset: parseInt(req.query.offset as string),
+        after: req.query.after as string,
+        orderAsc: 'Post.created',
+      }
+    );
+
+    res.json(comments || []);
+  });
+
   router.post('/:id/comment', async (req: Request, res: Response) => {
     const date = new Date();
     const comment = {
