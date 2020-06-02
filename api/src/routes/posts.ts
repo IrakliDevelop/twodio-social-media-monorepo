@@ -35,6 +35,30 @@ export const postsRouter = () => {
     res.json(post || null);
   });
 
+  router.post('/:id/comment', async (req: Request, res: Response) => {
+    const date = new Date();
+    const comment = {
+      ...req.body,
+      created: date,
+      updated: date,
+      user: {
+        id: req.user!.id,
+      },
+      parent: {
+        id: req.params.id,
+      },
+    };
+
+    comment.id = await postModel.addComment(comment);
+
+    res.notify('comment-add', {
+      comment,
+      user: R.pick(Object.keys(userProjections.public), req.user),
+    });
+
+    res.json(comment);
+  });
+
   router.post('/', async (req: Request, res: Response) => {
     const date = new Date();
     const post = {

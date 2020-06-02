@@ -15,6 +15,11 @@ interface CreatePostArg extends Omit<Post, 'id' | 'user'> {
 }
 type UpdatePostArg = RequireOnly<Omit<Post, 'user'>, 'id'>;
 
+interface AddCommentArg extends Omit<Post, 'id' | 'user' | 'parent'> {
+  user: RequireOnly<User, 'id'>;
+  parent: RequireOnly<Post, 'id'>;
+}
+
 export const postProjections = {
   general: {
     id: 1,
@@ -143,6 +148,28 @@ export class PostModel {
     return !!R.path(['q', 0, 'posts', 0, 'uid'], result.getJson());
   }
 
+  async addComment(comment: AddCommentArg) {
+    const mu = new Mutation();
+    mu.setSetJson({
+      'uid': comment.parent.id,
+      'Post.children': {
+        'dgraph.type': 'Post',
+        'uid': '_:comment',
+        'Post.text': comment.text,
+        'Post.created': comment.created,
+        'Post.updated': comment.updated,
+        'Post.parent': { uid: comment.parent.id },
+        'Post.user': { uid: comment.user.id },
+      },
+    });
+
+    const txn = this.client.newTxn();
+    const result = await txn.mutate(mu);
+    await txn.commit();
+
+    return result.getUidsMap().get('comment');
+  }
+
   async setLike(userID: string, postID: string, flag = true) {
     const mu = new Mutation();
     mu[flag ? 'setSetJson' : 'setDeleteJson']({
@@ -165,3 +192,4 @@ export class PostModel {
     return this.setLike(userID, postID, false);
   }
 }
+
