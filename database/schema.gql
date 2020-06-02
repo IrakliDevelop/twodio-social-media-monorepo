@@ -28,4 +28,7 @@ type Post {
   updated: DateTime! @search(by: [day])
   user: User! @hasInverse(field: posts)
   likes: [User!]
+  children: [Post!]
+  parent: Post
 }
+

@@ -29,6 +29,8 @@ export interface Post {
   updated: Scalars['DateTime'];
   user: User;
   likes?: Maybe<Array<User>>;
+  children?: Maybe<Array<Post>>;
+  parent?: Maybe<Post>;
 }
 
 export interface User {
