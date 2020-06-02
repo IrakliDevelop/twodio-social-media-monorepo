@@ -54,6 +54,7 @@ export class PostModel {
       .func('uid($userID)')
       .project({
         posts: Edge.fromRaw('post', projection)
+          .filter('NOT has(Post.parent)')
           .first(Math.min(maxCount, first))
           .offset(offset)
           .after(after)
