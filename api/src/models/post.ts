@@ -69,7 +69,7 @@ export class PostModel {
   async fetchByID(id: string, projection: Projection, {
     queryName = 'q',
   } = {}): Promise<any> {
-    const query = new Query('post', queryName)
+    return new Query('post', queryName)
       .func('uid($id)')
       .project(projection)
       .vars({ id: ['string', id] })
