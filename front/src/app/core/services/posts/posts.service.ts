@@ -3,6 +3,17 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 
+interface Args {
+  first?: number;
+  offset?: number;
+  after?: string;
+}
+
+function eachArgToString(args: Args) {
+  return Object.entries(args)
+    .reduce((r, [k, x]) => { r[k] = x.toString(); return r; }, {})
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -33,7 +44,18 @@ export class PostsService {
       },
     });
   }
+
+  getComments(postID: string, args: Args = {}): Observable<any> {
+    return this.http.get<any>(`${this.URL}/api/posts/${postID}/comments`, {
+      params: eachArgToString(args),
+    });
+  }
+
   createPost(post: any): Observable<any> {
     return this.http.post(`${this.URL}/api/posts`, post);
+  }
+
+  addComment(postID: string, comment: any): Observable<any> {
+    return this.http.post(`${this.URL}/api/posts/${postID}/comment`, comment);
   }
 }
