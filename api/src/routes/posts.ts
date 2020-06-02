@@ -88,7 +88,7 @@ export const postsRouter = () => {
       },
     };
 
-    const id = await postModel.create({
+    post.id = await postModel.create({
       text: post.text,
       user: post.user,
       created: post.created,
@@ -96,14 +96,11 @@ export const postsRouter = () => {
     });
 
     res.notify('post-add', {
-      post: {
-        ...post,
-        id,
-      },
+      post,
       user: R.pick(Object.keys(userProjections.public), req.user),
     });
 
-    res.json({ ...post, id });
+    res.json(post);
   });
 
   router.put('/:id', async (req: Request, res: Response) => {
