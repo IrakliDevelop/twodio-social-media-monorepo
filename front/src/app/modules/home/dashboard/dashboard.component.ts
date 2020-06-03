@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
-import { catchError, finalize, first } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { catchError, finalize, takeUntil } from 'rxjs/operators';
 
-import { UserService } from '@core/services/user/user.service';
-import { IUser } from '@core/models';
+import { UserService, PostsService } from '@core/services';
+import { IUser, IPost } from '@core/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,14 +15,22 @@ export class DashboardComponent implements OnInit {
   private loading: boolean;
   userExists: boolean;
   user: IUser;
+  unsubscribe$: Subject<void>;
+  posts: IPost[];
+  limit = 20;
+  offset = 0;
+  after: string;
 
   constructor(
     private userService: UserService,
+    private postsService: PostsService,
     private router: Router
   ) {
   }
 
   ngOnInit() {
+    this.unsubscribe$ = new Subject<void>();
+    this.posts = [];
     this._loadUser();
   }
 
@@ -30,7 +38,7 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.userExists = false;
     this.userService.fetchUserData().pipe(
-      first(),
+      takeUntil(this.unsubscribe$),
       catchError((err) => {
         return of({...err, error: true});
       }),
@@ -46,7 +54,17 @@ export class DashboardComponent implements OnInit {
       // user exists. display information and fetch posts;
       this.userExists = true;
       this.user = data;
-      console.log(this.user);
+      this.fetchPosts(this.limit, this.offset, this.after);
+    });
+  }
+
+  fetchPosts(limit?: number, offset?: number, after?: string): void {
+    this.loading = true;
+    this.postsService.getMyPosts(limit, offset, after).pipe(
+      takeUntil(this.unsubscribe$),
+      finalize(() => this.loading = false)
+    ).subscribe( data => {
+      this.posts = [...this.posts, ...data];
     });
   }
 

@@ -6,7 +6,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 import {UserService} from '@core/services';
 import {IUser} from '@core/models';
-import {UserInfoComponent} from '@shared/components';
+import {UserInfoModalComponent} from '@shared/components';
 
 @Component({
   selector: 'app-user-search',
@@ -69,7 +69,7 @@ export class UserSearchComponent implements OnInit {
   }
 
   getUserDetails(user?: IUser): void {
-    const modal = this.modalService.open(UserInfoComponent, {size: 'lg', backdrop: 'static', keyboard: false});
+    const modal = this.modalService.open(UserInfoModalComponent, {size: 'lg', keyboard: false});
     modal.componentInstance.user = user;
     modal.componentInstance.isOwn = false;
     modal.result.then(result => console.log(result)
