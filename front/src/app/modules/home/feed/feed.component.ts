@@ -17,6 +17,7 @@ export class FeedComponent implements OnInit {
   offset = 0;
   after: string;
 
+  noPosts = false;
   posts: IPost[];
   post: IPost;
   postForm: FormGroup;
@@ -51,6 +52,7 @@ export class FeedComponent implements OnInit {
       finalize(() => this.allPostsLoading = false)
     ).subscribe((res) => {
       console.log(res);
+      this.noPosts = !res.posts;
       // tslint:disable-next-line:variable-name
       this.posts = res.posts && res.posts.map(post => {
         post.created = moment(post.created).fromNow();
