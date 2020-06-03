@@ -15,6 +15,11 @@ interface CreatePostArg extends Omit<Post, 'id' | 'user'> {
 }
 type UpdatePostArg = RequireOnly<Omit<Post, 'user'>, 'id'>;
 
+interface AddCommentArg extends Omit<Post, 'id' | 'user' | 'parent'> {
+  user: RequireOnly<User, 'id'>;
+  parent: RequireOnly<Post, 'id'>;
+}
+
 export const postProjections = {
   general: {
     id: 1,
@@ -54,6 +59,7 @@ export class PostModel {
       .func('uid($userID)')
       .project({
         posts: Edge.fromRaw('post', projection)
+          .filter('NOT has(Post.parent)')
           .first(Math.min(maxCount, first))
           .offset(offset)
           .after(after)
@@ -68,7 +74,7 @@ export class PostModel {
   async fetchByID(id: string, projection: Projection, {
     queryName = 'q',
   } = {}): Promise<any> {
-    const query = new Query('post', queryName)
+    return new Query('post', queryName)
       .func('uid($id)')
       .project(projection)
       .vars({ id: ['string', id] })
@@ -142,6 +148,52 @@ export class PostModel {
     return !!R.path(['q', 0, 'posts', 0, 'uid'], result.getJson());
   }
 
+  async fetchComments(postID: string, projection: Projection, {
+    queryName = 'q',
+    first = 20,
+    offset = 0,
+    after = '',
+    orderAsc = '',
+    orderDesc = '',
+    maxCount = 20,
+  } = {}): Promise<any> {
+    return new Query('post', queryName)
+      .func('uid($postID)')
+      .project({
+        children: Edge.fromRaw('post', projection)
+          .first(Math.min(maxCount, first))
+          .offset(offset)
+          .after(after)
+          .orderAsc(orderAsc)
+          .orderDesc(orderDesc),
+      })
+      .vars({ postID: ['string', postID] })
+      .run(this.client)
+      .then(extractPath([queryName, 0, 'children']));
+  }
+
+  async addComment(comment: AddCommentArg) {
+    const mu = new Mutation();
+    mu.setSetJson({
+      'uid': comment.parent.id,
+      'Post.children': {
+        'dgraph.type': 'Post',
+        'uid': '_:comment',
+        'Post.text': comment.text,
+        'Post.created': comment.created,
+        'Post.updated': comment.updated,
+        'Post.parent': { uid: comment.parent.id },
+        'Post.user': { uid: comment.user.id },
+      },
+    });
+
+    const txn = this.client.newTxn();
+    const result = await txn.mutate(mu);
+    await txn.commit();
+
+    return result.getUidsMap().get('comment');
+  }
+
   async setLike(userID: string, postID: string, flag = true) {
     const mu = new Mutation();
     mu[flag ? 'setSetJson' : 'setDeleteJson']({
@@ -164,3 +216,4 @@ export class PostModel {
     return this.setLike(userID, postID, false);
   }
 }
+

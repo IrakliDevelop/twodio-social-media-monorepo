@@ -35,6 +35,48 @@ export const postsRouter = () => {
     res.json(post || null);
   });
 
+  router.get('/:id/comments', async (req: Request, res: Response) => {
+    const comments = await postModel.fetchComments(
+      req.params.id,
+      {
+        ...postProjections.general,
+        user: userProjections.public,
+      },
+      {
+        first: parseInt(req.query.first as string),
+        offset: parseInt(req.query.offset as string),
+        after: req.query.after as string,
+        orderAsc: 'Post.created',
+      }
+    );
+
+    res.json(comments || []);
+  });
+
+  router.post('/:id/comment', async (req: Request, res: Response) => {
+    const date = new Date();
+    const comment = {
+      ...req.body,
+      created: date,
+      updated: date,
+      user: {
+        id: req.user!.id,
+      },
+      parent: {
+        id: req.params.id,
+      },
+    };
+
+    comment.id = await postModel.addComment(comment);
+
+    res.notify('comment-add', {
+      comment,
+      user: R.pick(Object.keys(userProjections.public), req.user),
+    });
+
+    res.json(comment);
+  });
+
   router.post('/', async (req: Request, res: Response) => {
     const date = new Date();
     const post = {
@@ -46,7 +88,7 @@ export const postsRouter = () => {
       },
     };
 
-    const id = await postModel.create({
+    post.id = await postModel.create({
       text: post.text,
       user: post.user,
       created: post.created,
@@ -54,14 +96,11 @@ export const postsRouter = () => {
     });
 
     res.notify('post-add', {
-      post: {
-        ...post,
-        id,
-      },
+      post,
       user: R.pick(Object.keys(userProjections.public), req.user),
     });
 
-    res.json({ ...post, id });
+    res.json(post);
   });
 
   router.put('/:id', async (req: Request, res: Response) => {

@@ -14,7 +14,7 @@ export const feedRouter = () => {
   const router = Router();
 
   router.get('/', async (req: Request, res: Response) => {
-    const posts = await userModel.runQueries(
+    const result = await userModel.runQueries(
       new Query('user')
         .asVar()
         .func('uid($id)')
@@ -41,8 +41,9 @@ export const feedRouter = () => {
         })
     );
 
-    res.json(posts || []);
+    res.json(result.posts || []);
   });
 
   return router;
 };
+
