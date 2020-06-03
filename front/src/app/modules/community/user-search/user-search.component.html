@@ -9,7 +9,6 @@
 
 <ul>
   <li *ngFor="let user of users">
-    <a href="javascript:void(0)" (click)="getUserDetails(user)">{{user.username}}</a> <button mat-button (click)="followUser(user.username)">follow</button>
+    <a href="javascript:void(0)" (click)="getUserDetails(user)">{{user.username}}</a>
   </li>
 </ul>
-<!-- TODO: div of cards -->

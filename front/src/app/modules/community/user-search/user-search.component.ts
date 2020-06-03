@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {finalize, takeUntil} from 'rxjs/operators';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
@@ -60,18 +60,43 @@ export class UserSearchComponent implements OnInit {
     });
   }
 
-  followUser(username?: string): void {
+  followUser(username?: string): Observable<any> {
     if (!username) { return; }
-    this.userService.followUser(username).pipe(
+    this.loading = true;
+    return this.userService.followUser(username).pipe(
       takeUntil(this.unsubscribe$),
       finalize(() => this.loading = false)
-    ).subscribe(res => console.log(res));
+    );
   }
+  unFollowUser(username?: string): Observable<any> {
+    if (!username) { return; }
+    this.loading = true;
+    return this.userService.unFollowUser(username).pipe(
+      takeUntil(this.unsubscribe$),
+      finalize(() => this.loading = false)
+    );
+}
 
   getUserDetails(user?: IUser): void {
     const modal = this.modalService.open(UserInfoModalComponent, {size: 'lg', keyboard: false});
     modal.componentInstance.user = user;
     modal.componentInstance.isOwn = false;
+    modal.componentInstance.followUser.subscribe((followUser: IUser) => {
+      this.followUser(followUser.username).subscribe(res => {
+        console.log(res);
+        if (res.ok === true) {
+          modal.close();
+        }
+      });
+    });
+    modal.componentInstance.unFollowUser.subscribe((unFollowUser: IUser) => {
+      this.followUser(unFollowUser.username).subscribe(res => {
+        console.log(res);
+        if (res.ok === true) {
+          modal.close();
+        }
+      });
+    });
     modal.result.then(result => console.log(result)
       , reason => console.log(reason));
   }

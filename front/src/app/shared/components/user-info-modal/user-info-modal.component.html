@@ -5,4 +5,8 @@
 </div>
 <div class="modal-body">
   <app-user-info [user]="user" [isOwn]="isOwn"></app-user-info>
+  <div style="text-align: center;">
+    <button style="width: 20%;" class="btn btn-success" (click)="onFollowClick()"><i class="fa fa-heart-o"></i>Follow</button>
+    <!--      <button><i class="fa fa-envelope"></i> Contact</button>-->
+  </div>
 </div>

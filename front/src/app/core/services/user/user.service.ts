@@ -28,6 +28,9 @@ export class UserService {
   followUser(username?: string): Observable<any> {
     return this.http.post<any>(`${this.URL}/api/user/${username}/follow`, {});
   }
+  unFollowUser(username?: string): Observable<any> {
+    return this.http.post<any>(`${this.URL}/api/user/${username}/unFollow`, {});
+  }
   getUserInfoByUsername(username?: string): Observable<any> {
     return this.http.get<any>(`${this.URL}/api/user/${username}`);
   }
