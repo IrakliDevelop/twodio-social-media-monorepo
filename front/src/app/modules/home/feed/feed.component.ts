@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {finalize, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import * as moment from 'moment';
+import * as R from 'ramda';
+
 import {PostsService, WsService} from '@core/services';
 import {IPost} from '@core/models';
-import {Subject} from 'rxjs';
-
 
 @Component({
   selector: 'app-feed',
@@ -79,6 +80,19 @@ export class FeedComponent implements OnInit {
         if (res.text && res.text === this.post.text) { // TODO: this is temporarily. use proper success checking
           this.loadPosts(this.limit, this.offset);
         }
+    });
+  }
+
+  onLike(postID: string): void {
+    this.postsService.likePost(postID).subscribe(res => {
+      console.log(res);
+      if (res.ok) { this.posts.find(post => post.id === postID).likeCount++; }
+    });
+  }
+  onUnlike(postID: string): void {
+    this.postsService.unlikePost(postID).subscribe(res => {
+      console.log(res);
+      if (res.ok) { this.posts.find(post => post.id === postID).likeCount--; }
     });
   }
 

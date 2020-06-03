@@ -56,6 +56,13 @@ export class PostsService {
     return this.http.post(`${this.URL}/api/posts`, post);
   }
 
+  likePost(postID: string): Observable<any> {
+    return this.http.put(`${this.URL}/api/posts/${postID}/like`, {});
+  }
+  unlikePost(postID: string): Observable<any> {
+    return this.http.put(`${this.URL}/api/posts/${postID}/unlike`, {});
+  }
+
   addComment(postID: string, comment: any): Observable<any> {
     return this.http.post(`${this.URL}/api/posts/${postID}/comment`, comment);
   }
