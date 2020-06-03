@@ -5,6 +5,7 @@ import { catchError, finalize, takeUntil } from 'rxjs/operators';
 
 import { UserService, PostsService } from '@core/services';
 import { IUser, IPost } from '@core/models';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-dashboard',
@@ -63,8 +64,12 @@ export class DashboardComponent implements OnInit {
     this.postsService.getMyPosts(limit, offset, after).pipe(
       takeUntil(this.unsubscribe$),
       finalize(() => this.loading = false)
-    ).subscribe( data => {
-      this.posts = [...this.posts, ...data];
+    ).subscribe( (data: IPost[]) => {
+      this.posts = data.map(post => {
+        post.user = this.user;
+        post.created = moment(post.created).fromNow();
+        return post;
+      });
     });
   }
 

@@ -49,8 +49,10 @@ export class FeedComponent implements OnInit {
     this.postsService.getFeed(limit, offset, after).pipe(
       takeUntil(this.unsubscribe$),
       finalize(() => this.allPostsLoading = false)
-    ).subscribe((res: IPost[]) => {
-      this.posts = res.map(post => {
+    ).subscribe((res) => {
+      console.log(res);
+      // tslint:disable-next-line:variable-name
+      this.posts = res.posts && res.posts.map(post => {
         post.created = moment(post.created).fromNow();
         return post;
       });
