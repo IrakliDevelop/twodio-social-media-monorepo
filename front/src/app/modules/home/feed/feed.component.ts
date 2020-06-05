@@ -3,10 +3,11 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {finalize, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import * as moment from 'moment';
-import * as R from 'ramda';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 import {PostsService, WsService} from '@core/services';
 import {IPost} from '@core/models';
+import {PostDetailsModalComponent} from '@shared/components';
 
 @Component({
   selector: 'app-feed',
@@ -14,7 +15,7 @@ import {IPost} from '@core/models';
   styleUrls: ['./feed.component.scss'],
 })
 export class FeedComponent implements OnInit {
-  limit = 20;
+  limit = 50;
   offset = 0;
   after: string;
 
@@ -30,7 +31,8 @@ export class FeedComponent implements OnInit {
   constructor(
     private wsService: WsService,
     private postsService: PostsService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modalService: NgbModal
   ) {
   }
 
@@ -80,6 +82,10 @@ export class FeedComponent implements OnInit {
           this.loadPosts(this.limit, this.offset);
         }
     });
+  }
+  openPostDetails(post: IPost) {
+    const modal = this.modalService.open(PostDetailsModalComponent, {size: 'lg', keyboard: false});
+    modal.componentInstance.post = post;
   }
 
   onLike(postID: string): void {

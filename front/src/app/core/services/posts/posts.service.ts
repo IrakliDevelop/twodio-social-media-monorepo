@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../../environments/environment';
-import {IPostResponse} from '@core/models';
 
 interface Args {
   first?: number;
@@ -26,7 +25,7 @@ export class PostsService {
   ) {
   }
 
-  getFeed(first?: number, offset?: number, after?: string): Observable<IPostResponse> {
+  getFeed(first?: number, offset?: number, after?: string): Observable<any> {
     return this.http.get<any>(`${this.URL}/api/feed`, {
       params: {
         first: first.toString(),

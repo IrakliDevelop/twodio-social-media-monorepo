@@ -12,7 +12,9 @@ import {
   UserInfoComponent,
   UserInfoModalComponent,
   PostPreviewComponent,
-} from '@shared/components';
+  PostDetailsModalComponent,
+  PostCommentsComponent,
+} from './components';
 
 
 const SHARED_MODULES = [
@@ -29,7 +31,9 @@ const SHARED_MODULES = [
     SidebarComponent,
     UserInfoComponent,
     UserInfoModalComponent,
-    PostPreviewComponent],
+    PostPreviewComponent,
+    PostDetailsModalComponent,
+    PostCommentsComponent],
   imports: [
     CommonModule,
     ...SHARED_MODULES,
@@ -42,9 +46,12 @@ const SHARED_MODULES = [
     UserInfoComponent,
     UserInfoModalComponent,
     PostPreviewComponent,
+    PostDetailsModalComponent,
+    PostCommentsComponent,
   ],
   entryComponents: [
     UserInfoModalComponent,
+    PostDetailsModalComponent,
   ],
 })
 export class SharedModule {
