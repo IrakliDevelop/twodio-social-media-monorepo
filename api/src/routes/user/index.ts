@@ -5,9 +5,11 @@ import {
   UserModel,
   userProjections,
   postProjections,
+} from '../../models';
+import {
   Query,
   Edge,
-} from '../../models';
+} from '../../dgraph';
 
 export const userRouter = () => {
   const userModel = container.resolve(UserModel);

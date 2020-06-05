@@ -5,9 +5,9 @@ import { PartialBy, User, AuthData, AuthProvider } from '../types';
 import {
   Projection,
   Query,
-  setVarsForRequest,
-  extractPath,
-} from './utils';
+  setVarsForRequest
+} from '../dgraph';
+import { BaseModel } from './base-model';
 
 interface UserCreateArg extends Omit<User, 'id' | 'authData'> {
   id?: User['id'];
@@ -38,29 +38,11 @@ export const userProjections = {
 };
 
 @injectable()
-export class UserModel {
+export class UserModel extends BaseModel {
   constructor(
-    private client: DgraphClient
-  ) { }
-
-  async runQueries(...queries: Query[]) {
-    return Query.run(this.client, ...queries)
-      .then(x => x.getJson());
-  }
-
-  async runQuery(query: Query) {
-    return this.runQueries(query);
-  }
-
-  async fetchByID(id: string, projection: Projection, {
-    queryName = 'q',
-  } = {}): Promise<any> {
-    return new Query('user', queryName)
-      .func('uid($id)')
-      .project(projection)
-      .vars({ id: ['string', id] })
-      .run(this.client)
-      .then(extractPath([queryName, 0]))
+    client: DgraphClient
+  ) {
+    super('user', client);
   }
 
   async fetchByAuthSub(sub: string, projection: Projection, {
@@ -70,8 +52,7 @@ export class UserModel {
       .func('eq(AuthData.sub, $sub)')
       .project({ user: projection })
       .vars({ sub: ['string', sub] })
-      .run(this.client)
-      .then(extractPath([queryName, 0, 'user']));
+      .call(this.runExtract(0, 'user'));
   }
 
   async create(user: UserCreateArg) {

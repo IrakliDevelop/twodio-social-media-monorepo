@@ -4,9 +4,8 @@ import {
   userProjections,
   postProjections,
   UserModel,
-  Edge,
-  Query
 } from '../models';
+import { Edge, Query, QueryVars } from '../dgraph';
 
 export const feedRouter = () => {
   const userModel = container.resolve(UserModel);
@@ -14,11 +13,12 @@ export const feedRouter = () => {
   const router = Router();
 
   router.get('/', async (req: Request, res: Response) => {
+    const vars: QueryVars = { id: ['string', req.user!.id] };
     const result = await userModel.runQueries(
       new Query('user')
         .asVar()
         .func('uid($id)')
-        .vars({ id: ['string', req.user!.id] })
+        .vars(vars)
         .project({
           posts: new Edge('post', { id: 'userPostIDs as uid' }),
           follows: new Edge('user', {
@@ -29,6 +29,7 @@ export const feedRouter = () => {
         }),
       new Query('post', 'posts')
         .func('uid(userPostIDs, followsPostIDs)')
+        .vars(vars)
         .orderDesc('Post.created')
         .first(Math.min(parseInt(req.query.first as string) || 15, 15))
         .offset(parseInt(req.query.offset as string))

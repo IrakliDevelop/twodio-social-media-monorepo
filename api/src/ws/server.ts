@@ -4,7 +4,8 @@ import { container } from 'tsyringe';
 import { RedisClient } from 'redis';
 import WebSocket from 'ws';
 import R from 'ramda';
-import { UserModel, PostModel, Edge } from '../models';
+import { UserModel } from '../models';
+import { Edge } from '../dgraph';
 import { SubMap } from './submap';
 
 const subscriber = container.resolve<RedisClient>('subscriber');

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { container } from 'tsyringe';
 import R from 'ramda';
-import { PostModel, postProjections, Edge, userProjections } from '../models';
+import { PostModel, postProjections, userProjections } from '../models';
 
 export const postsRouter = () => {
   const postModel = container.resolve(PostModel);
@@ -16,7 +16,7 @@ export const postsRouter = () => {
         first: parseInt(req.query.first as string),
         offset: parseInt(req.query.offset as string),
         after: req.query.after as string,
-        orderDesc: 'Post.created',
+        orderdesc: 'Post.created',
       }
     );
 
@@ -46,7 +46,7 @@ export const postsRouter = () => {
         first: parseInt(req.query.first as string),
         offset: parseInt(req.query.offset as string),
         after: req.query.after as string,
-        orderAsc: 'Post.created',
+        orderasc: 'Post.created',
       }
     );
 

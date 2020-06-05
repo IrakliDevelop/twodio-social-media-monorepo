@@ -7,8 +7,10 @@ import {
   Query,
   Edge,
   setVarsForRequest,
-  extractPath,
-} from './utils';
+} from '../dgraph';
+import { BaseModel } from './base-model';
+import { QueryOptions, withArgs } from './utils';
+import * as queries from './queries';
 
 interface CreatePostArg extends Omit<Post, 'id' | 'user'> {
   user: RequireOnly<User, 'id'>;
@@ -33,53 +35,30 @@ export const postProjections = {
 @injectable()
 export class PostModel {
 
+@injectable()
+export class PostModel extends BaseModel {
   constructor(
-    private client: DgraphClient
-  ) { }
-
-  async runQueries(...queries: Query[]) {
-    return Query.run(this.client, ...queries)
-      .then(x => x.getJson());
+    client: DgraphClient
+  ) {
+    super('post', client);
   }
 
-  async runQuery(query: Query) {
-    return this.runQueries(query);
-  }
-
-  async fetchByUserID(userID: string, projection: Projection, {
-    queryName = 'q',
-    first = 20,
-    offset = 0,
-    after = '',
-    orderAsc = '',
-    orderDesc = '',
-    maxCount = 20,
-  } = {}): Promise<any> {
-    return new Query('user', queryName)
-      .func('uid($userID)')
-      .project({
+  async fetchByUserID(
+    userID: string,
+    projection: Projection,
+    opts: Partial<QueryOptions> = {}
+  ): Promise<any> {
+    return queries.fetchByID(
+        'user',
+        {
         posts: Edge.fromRaw('post', projection)
-          .filter('NOT has(Post.parent)')
-          .first(Math.min(maxCount, first))
-          .offset(offset)
-          .after(after)
-          .orderAsc(orderAsc)
-          .orderDesc(orderDesc),
-      })
-      .vars({ userID: ['string', userID] })
-      .run(this.client)
-      .then(extractPath([queryName, 0, 'posts']));
-  }
-
-  async fetchByID(id: string, projection: Projection, {
-    queryName = 'q',
-  } = {}): Promise<any> {
-    return new Query('post', queryName)
-      .func('uid($id)')
-      .project(projection)
-      .vars({ id: ['string', id] })
-      .run(this.client)
-      .then(extractPath([queryName, 0]));
+            .apply(withArgs(opts))
+            .filter('NOT has(Post.parent)'),
+        },
+        {},
+        userID
+      )
+      .call(this.runExtract(0, 'posts'));
   }
 
   async create(post: CreatePostArg) {
@@ -148,28 +127,20 @@ export class PostModel {
     return !!R.path(['q', 0, 'posts', 0, 'uid'], result.getJson());
   }
 
-  async fetchComments(postID: string, projection: Projection, {
-    queryName = 'q',
-    first = 20,
-    offset = 0,
-    after = '',
-    orderAsc = '',
-    orderDesc = '',
-    maxCount = 20,
-  } = {}): Promise<any> {
-    return new Query('post', queryName)
-      .func('uid($postID)')
-      .project({
+  async fetchComments(
+    postID: string,
+    projection: Projection,
+    opts: Partial<QueryOptions> = {}
+  ): Promise<any> {
+    return this.fetchByIDQuery(
+        postID,
+        {
         children: Edge.fromRaw('post', projection)
-          .first(Math.min(maxCount, first))
-          .offset(offset)
-          .after(after)
-          .orderAsc(orderAsc)
-          .orderDesc(orderDesc),
-      })
-      .vars({ postID: ['string', postID] })
-      .run(this.client)
-      .then(extractPath([queryName, 0, 'children']));
+            .apply(withArgs(opts)),
+        },
+        opts
+      )
+      .call(this.runExtract(0, 'children'));
   }
 
   async addComment(comment: AddCommentArg) {
