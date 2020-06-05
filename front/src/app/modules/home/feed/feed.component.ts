@@ -52,7 +52,7 @@ export class FeedComponent implements OnInit {
       takeUntil(this.unsubscribe$),
       finalize(() => this.allPostsLoading = false)
     ).subscribe((res) => {
-      this.noPosts = !res.posts;
+      this.noPosts = !res;
       // tslint:disable-next-line:variable-name
       this.posts = res.map(post => {
         post.created = moment(post.created).fromNow();
