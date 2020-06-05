@@ -15,6 +15,7 @@ const notNullEnv = (key: string) => {
 
 export default {
   root,
+  isDev: env.ENV === 'dev',
   isLambda: !!(env.LAMBDA_TASK_ROOT && env.AWS_EXECUTION_ENV),
   server: {
     port: env.SERVER_PORT || 3000,

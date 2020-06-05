@@ -1,6 +1,7 @@
 import { DgraphClient } from 'dgraph-js';
 import { indenter } from './common';
 import { Edge, Projection } from './edge';
+import config from '../config';
 
 export type QueryVarType = 'int' | 'float' | 'string' | 'bool';
 export type QueryVars = {
@@ -29,7 +30,8 @@ export class Query extends Edge {
 
     const txn = client.newTxn();
 
-    console.log('Query:', queryStr, varsQuery.queryVarsObj);
+    if (config.isDev)
+      console.log('Query:', queryStr, varsQuery.queryVarsObj);
     return (() => {
       if (hasVars) {
         return txn.queryWithVars(queryStr, varsQuery.queryVarsObj)
