@@ -19,7 +19,7 @@
 <!--      <span class={styles.number}>{this.props.numRetweets}</span>-->
 <!--    </div>-->
     <div>
-    <span [class.favYellow]="liked" style="cursor: pointer;" class='fa fa-star' (click)="onPostLikeClicked()"></span>
+    <span [class.favYellow]="post.iLike" style="cursor: pointer;" class='fa fa-star' (click)="onPostLikeClicked()"></span>
     <span class="number">{{post.likeCount}}</span>
   </div>
 </div>

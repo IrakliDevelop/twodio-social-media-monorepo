@@ -32,8 +32,15 @@ export const postProjections = {
   },
 };
 
-@injectable()
-export class PostModel {
+/**
+ * @param userID uid or param name
+ */
+export function iLikeProjection(userID: string) {
+  return {
+    iLikesCount: `iLikesCount as count(Post.likes @filter(uid(${userID})))`,
+    iLike: 'math(iLikesCount > 0)',
+  };
+}
 
 @injectable()
 export class PostModel extends BaseModel {
@@ -51,7 +58,7 @@ export class PostModel extends BaseModel {
     return queries.fetchByID(
         'user',
         {
-        posts: Edge.fromRaw('post', projection)
+          posts: Edge.fromRaw('post', projection)
             .apply(withArgs(opts))
             .filter('NOT has(Post.parent)'),
         },
@@ -135,7 +142,7 @@ export class PostModel extends BaseModel {
     return this.fetchByIDQuery(
         postID,
         {
-        children: Edge.fromRaw('post', projection)
+          children: Edge.fromRaw('post', projection)
             .apply(withArgs(opts)),
         },
         opts

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { container } from 'tsyringe';
 import R from 'ramda';
 import { PostModel, postProjections, userProjections } from '../models';
+import { iLikeProjection } from '../models/post';
 
 export const postsRouter = () => {
   const postModel = container.resolve(PostModel);
@@ -10,8 +11,11 @@ export const postsRouter = () => {
 
   router.get('/', async (req: Request, res: Response) => {
     const posts = await postModel.fetchByUserID(
-      req.user && req.user.id as any,
-      postProjections.general,
+      req.user!.id,
+      {
+        ...postProjections.general,
+        ...iLikeProjection(req.user!.id),
+      },
       {
         first: parseInt(req.query.first as string),
         offset: parseInt(req.query.offset as string),
@@ -27,6 +31,7 @@ export const postsRouter = () => {
   router.get('/:id', async (req: Request, res: Response) => {
     const post = await postModel.fetchByID(req.params.id, {
       ...postProjections.general,
+      ...iLikeProjection(req.user!.id),
       user: {
         id: 1,
       },
@@ -40,6 +45,7 @@ export const postsRouter = () => {
       req.params.id,
       {
         ...postProjections.general,
+        ...iLikeProjection(req.user!.id),
         user: userProjections.public,
       },
       {
