@@ -56,7 +56,7 @@ export class PostsService {
   }
 
   addComment(postID: string, comment: any): Observable<any> {
-    return this.http.post(`${this.URL}/api/posts/${postID}/comment`, comment);
+    return this.http.post(`${this.URL}/api/posts/${postID}/comment`, {text: comment});
   }
 
   setLike(postID: string, flag: boolean): Observable<any> {
