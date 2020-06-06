@@ -7,7 +7,7 @@ export const environment = {
       // identityPoolId: '',
       region: 'eu-west-1',
       userPoolId: ' eu-west-1_DaMN9gJqG',
-      userPoolWebClientId: '',
+      userPoolWebClientId: 'd26jcsmchv8mp6r2m6mppopmd',
     },
   },
 };
