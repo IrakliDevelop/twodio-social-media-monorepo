@@ -6,7 +6,7 @@ export const environment = {
     Auth: {
       // identityPoolId: '',
       region: 'eu-west-1',
-      userPoolId: ' eu-west-1_DaMN9gJqG',
+      userPoolId: 'eu-west-1_DaMN9gJqG',
       userPoolWebClientId: 'd26jcsmchv8mp6r2m6mppopmd',
     },
   },
