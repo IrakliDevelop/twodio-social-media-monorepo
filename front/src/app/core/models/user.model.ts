@@ -3,6 +3,7 @@ export interface IUser {
   email?: string;
   username?: string;
   fullName?: string;
+  iFollow?: boolean;
   followsCount?: number;
   followersCount?: number;
   postsCount?: number;
