@@ -6,6 +6,7 @@ import { feedRouter } from './feed';
 import { authRouter } from './auth';
 import { postsRouter } from './posts';
 import { userRouter } from './user';
+import { chatRouter } from './chat';
 
 export const apiRouter = () => {
   const router = Router();
@@ -18,6 +19,7 @@ export const apiRouter = () => {
   router.use('/feed', feedRouter());
   router.use('/posts', postsRouter());
   router.use('/user', userRouter());
+  router.use('/chat', chatRouter());
 
   return router;
 };

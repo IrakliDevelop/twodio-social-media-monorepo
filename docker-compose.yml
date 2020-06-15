@@ -33,6 +33,10 @@ services:
       - ratel
       - alpha
       - zero
+  mongo-db:
+    image: mongo:latest
+    ports:
+      - 27017:27017
   redis:
     image: "redis:alpine"
     command: redis-server --requirepass $REDIS_PASSWORD
@@ -60,4 +64,3 @@ services:
     ports:
       - 8000:8000
     command: dgraph-ratel
-

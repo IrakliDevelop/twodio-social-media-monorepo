@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import './database';
 import './redis';
+import './mongodb';
 import { handleUpgrade } from './ws';
 import { compose } from 'compose-middleware';
 import express, { Express } from 'express';
