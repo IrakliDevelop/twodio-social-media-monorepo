@@ -7,9 +7,12 @@ export const fetchByID = R.curry(
     rootType: string,
     projection: Projection,
     opts: Partial<QueryOptions>,
-    id: string
-  ) => query(rootType, opts)
-    .func('uid($id)')
-    .project(projection)
-    .vars({ id: ['string', id] })
+    id: string | string[]
+  ) => {
+    if (Array.isArray(id)) id = `[${id.join(', ')}]`;
+    return query(rootType, opts)
+      .func('uid($id)')
+      .project(projection)
+      .vars({ id: ['string', id] });
+  }
 );
