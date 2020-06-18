@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, combineLatest} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 import * as moment from 'moment';
 import {IPost} from '@core/models';
 import {map} from 'rxjs/operators';
+import { UserService } from '../user/user.service';
 
 interface Args {
   first?: number;
@@ -24,7 +25,8 @@ export class PostsService {
   URL: string = environment.ApiUrl;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: UserService
   ) {
   }
 
@@ -52,13 +54,18 @@ export class PostsService {
   }
 
   getMyPosts(first?: number, offset?: number, after?: string): Observable<IPost[]> {
-    return this.http.get<any>(`${this.URL}/api/posts`, {
+    const posts$ = this.http.get<any>(`${this.URL}/api/posts`, {
       params: {
         first: first.toString(),
         offset: offset.toString(),
         after: after ? after : '',
       },
-    }).pipe(map(posts => posts.map(x => this.parsePost(x))));
+    });
+
+    return combineLatest(this.userService.me$, posts$)
+      .pipe(map(([user, posts]) => {
+        return posts.map(post => ({ ...this.parsePost(post), user }));
+      }));
   }
 
   getComments(postID: string, args: Args = {}): Observable<IPost[]> {

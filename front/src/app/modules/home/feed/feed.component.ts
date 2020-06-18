@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {takeUntil, map, switchMap, tap, scan, throttle, filter, debounceTime} from 'rxjs/operators';
 import {Subject, BehaviorSubject, combineLatest, merge} from 'rxjs';
@@ -23,6 +23,8 @@ function mergePosts(list1: IPost[], list2: IPost[] = []) {
   styleUrls: ['./feed.component.scss'],
 })
 export class FeedComponent implements OnInit {
+  @Input() onlyMine = false;
+
   allPostsLoading$ = new BehaviorSubject(false);
   limit$ = new BehaviorSubject(50);
   offset$ = new BehaviorSubject(0);
@@ -35,7 +37,11 @@ export class FeedComponent implements OnInit {
   initialPosts$ = combineLatest(this.limit$, this.offset$).pipe(
     debounceTime(500),
     tap(() => { this.allPostsLoading$.next(true); }),
-    switchMap(([limit, offset]) => this.postsService.getFeed(limit, offset)),
+    switchMap(([limit, offset]) => {
+      return this.onlyMine
+        ? this.postsService.getMyPosts(limit, offset)
+        : this.postsService.getFeed(limit, offset);
+    }),
     tap(() => this.allPostsLoading$.next(false))
   );
 
