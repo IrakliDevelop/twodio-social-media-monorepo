@@ -22,7 +22,6 @@ export class PostPreviewComponent implements OnInit {
   }
 
   onPostLikeClicked(): void {
-    this.post.iLike = !this.post.iLike;
-    this.post.iLike ? this.like.emit(this.post.id) : this.unlike.emit(this.post.id);
+    !this.post.iLike ? this.like.emit(this.post.id) : this.unlike.emit(this.post.id);
   }
 }
