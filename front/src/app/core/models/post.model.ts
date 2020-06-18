@@ -6,7 +6,8 @@ export interface IPost {
   iLike?: boolean;
   likeCount?: number;
   childrenCount?: number;
-  created?: string;
+  created?: Date;
+  updated?: Date;
   user: IUser;
 }
 
