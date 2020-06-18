@@ -67,7 +67,6 @@ export class DashboardComponent implements OnInit {
     ).subscribe( (data: IPost[]) => {
       this.posts = data.map(post => {
         post.user = this.user;
-        post.created = moment(post.created).fromNow();
         return post;
       });
     });
