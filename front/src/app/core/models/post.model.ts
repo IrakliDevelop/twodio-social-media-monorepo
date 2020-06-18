@@ -8,6 +8,7 @@ export interface IPost {
   childrenCount?: number;
   created?: Date;
   updated?: Date;
+  createdFromNow?: string;
   user: IUser;
 }
 
