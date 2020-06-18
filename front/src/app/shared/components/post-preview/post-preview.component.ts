@@ -8,12 +8,17 @@ import { IPost } from '@core/models';
 })
 export class PostPreviewComponent implements OnInit {
   @Input() post: IPost;
+  @Output() commentsClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() like: EventEmitter<string> = new EventEmitter<string>();
   @Output() unlike: EventEmitter<string> = new EventEmitter<string>();
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  onPostCommentsClicked(): void {
+    this.commentsClick.emit();
   }
 
   onPostLikeClicked(): void {

@@ -83,6 +83,7 @@ export class FeedComponent implements OnInit {
         }
     });
   }
+
   openPostDetails(post: IPost) {
     const modal = this.modalService.open(PostDetailsModalComponent, {size: 'lg', keyboard: false});
     modal.componentInstance.post = post;

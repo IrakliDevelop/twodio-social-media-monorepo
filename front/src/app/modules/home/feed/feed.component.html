@@ -11,6 +11,6 @@
   <ngx-loading [show]="allPostsLoading"></ngx-loading>
   <h3 *ngIf="noPosts">It's lonely here. Let's add some posts</h3>
   <ng-container *ngFor="let post of posts">
-    <app-post-preview [post]="post" (click)="openPostDetails(post)" (like)="onLike($event)" (unlike)="onUnlike($event)"></app-post-preview>
+    <app-post-preview [post]="post" (commentsClick)="openPostDetails(post)" (like)="onLike($event)" (unlike)="onUnlike($event)"></app-post-preview>
   </ng-container>
 </div>

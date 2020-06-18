@@ -1,4 +1,4 @@
-<div class="root" style="cursor: pointer;">
+<div class="root">
   <div class="user">
     <figure>
       <img class="avatar" src="/assets/images/default_icon.png" />
@@ -9,7 +9,7 @@
   </div>
   <h3>{{post.text}}</h3>
   <div class="buttons">
-    <div class="icon">
+    <div class="icon" style="cursor: pointer;" (click)="onPostCommentsClicked()">
       <span class='fa fa-reply'></span>
       <span class="number">{{post.childrenCount}}</span>
     </div>
