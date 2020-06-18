@@ -24,7 +24,7 @@ export class WsService {
   event$ = this.rawEvent$.pipe(
     map(evt => ({
       event: evt.event,
-      data: {
+      data: !evt.data ? {} : {
         ...evt.data,
         post: !evt.data.post ? undefined :
           this.postsService.parsePost(evt.data.post),
