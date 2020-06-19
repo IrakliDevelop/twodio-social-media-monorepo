@@ -6,8 +6,20 @@
   </div>
 </form>
 
-<!--- TODO: styling -->
-<h4>comments:</h4>
-<ul>
-  <li *ngFor="let comment of comments$ | async">{{comment?.text}}</li>
-</ul>
+<div *ngFor="let comment of comments$ | async" style="margin-bottom: 15px;">
+  <div class="user">
+    <figure>
+      <img class="avatar" src="/assets/images/default_icon.png" />
+    </figure>
+    <span class="displayName">{{comment.user.fullName}}</span>
+    <span class="username"> {{comment.user.username}}</span>
+    <span class="date"> {{comment.createdFromNow}}</span>
+  </div>
+    <span class="post-text">{{comment.text}}</span>
+    <!-- <div class="buttons">
+      <div> -->
+      <!-- <span [class.favYellow]="comment.iLike" style="cursor: pointer;" class='fa fa-star' (click)="onPostLikeClicked()"></span>
+      <span class="number">{{post.likeCount}}</span> -->
+    <!-- </div> -->
+    <!-- </div> -->
+</div>

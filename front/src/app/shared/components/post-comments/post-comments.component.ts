@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subject, combineLatest, BehaviorSubject, merge} from 'rxjs';
 import {takeUntil, debounceTime, tap, filter, scan, map, switchMap} from 'rxjs/operators';
@@ -14,6 +14,10 @@ import {IPost, IComment} from '@core/models';
 })
 export class PostCommentsComponent implements OnInit {
   @Input() post: IPost;
+
+  @Output() like: EventEmitter<string> = new EventEmitter<string>();
+  @Output() unlike: EventEmitter<string> = new EventEmitter<string>();
+
   commentForm: FormGroup;
   comment: string;
   comments: IComment[];
@@ -77,7 +81,9 @@ export class PostCommentsComponent implements OnInit {
     ).subscribe( res => {
       this.loading$.next(false);
       this.commentForm.reset();
-      console.log(res);
     });
+  }
+  onPostLikeClicked(comment: IPost): void {
+    comment.iLike ? this.like.emit(comment.id) : this.unlike.emit(comment.id);
   }
 }

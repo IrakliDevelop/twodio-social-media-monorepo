@@ -27,9 +27,9 @@ export class WsService {
       data: !evt.data ? {} : {
         ...evt.data,
         comment: !evt.data.comment ? undefined :
-          this.postsService.parsePost(evt.data.comment),
+          this.postsService.parsePost({ ...evt.data.comment, user: evt.data.user }),
         post: !evt.data.post ? undefined :
-          this.postsService.parsePost(evt.data.post),
+          this.postsService.parsePost({ ...evt.data.post, user: evt.data.user }),
         posts: !evt.data.posts ? undefined :
           evt.data.posts.map(x => this.postsService.parsePost(x)),
       },
