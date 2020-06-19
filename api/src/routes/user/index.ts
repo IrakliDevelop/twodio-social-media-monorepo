@@ -11,6 +11,7 @@ import {
   Query,
   Edge,
 } from '../../dgraph';
+import { userSearchRouter } from './search';
 
 export const userRouter = () => {
   const userModel = container.resolve(UserModel);
@@ -51,28 +52,7 @@ export const userRouter = () => {
     res.json({ ok: true });
   });
 
-  router.get('/search/:term/:after?', async (req: Request, res: Response) => {
-    const projection = R.omit(['email'], userProjections.general);
-    const query = (name: string) => new Query('user', name)
-      .first(10)
-      .after(req.params.after)
-      .vars({ term: ['string', req.params.term] })
-
-    res.json(await userModel.runQueries(
-      query('byUsername')
-        .func('match(User.username, $term, 3)')
-        .project({
-          ...projection,
-          ...iFollowProjection(req.user!.id, 1),
-        }),
-      query('byFullName')
-        .func('match(User.fullName, $term, 16)')
-        .project({
-          ...projection,
-          ...iFollowProjection(req.user!.id, 2),
-        }),
-    ));
-  });
+  router.use('/search', userSearchRouter());
 
   return router;
 };
