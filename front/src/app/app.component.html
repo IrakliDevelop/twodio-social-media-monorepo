@@ -1,11 +1,1 @@
-<div class="wrapper">
-  <div *ngIf="isAuthenticated" class="sidebar" data-color="white" data-active-color="danger">
-    <app-sidebar></app-sidebar>
-  </div>
-  <div class="main-panel">
-    <app-header *ngIf="isAuthenticated"></app-header>
-    <div class="content">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</div>
+<router-outlet></router-outlet>
