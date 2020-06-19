@@ -75,7 +75,7 @@ export const postsRouter = () => {
 
     comment.id = await postModel.addComment(comment);
 
-    res.notify('comment-add', {
+    res.notifyFollowers('comment-add', {
       comment,
       user: R.pick(Object.keys(userProjections.public), req.user),
     });
@@ -101,7 +101,7 @@ export const postsRouter = () => {
       updated: post.updated,
     });
 
-    res.notify('post-add', {
+    res.notifyFollowers('post-add', {
       post,
       user: R.pick(Object.keys(userProjections.public), req.user),
     });
@@ -121,7 +121,7 @@ export const postsRouter = () => {
       updated: new Date(),
     });
 
-    res.notify('post-edit', {
+    res.notifyFollowers('post-edit', {
       post,
       user: R.pick(Object.keys(userProjections.public), req.user),
     });
@@ -131,13 +131,13 @@ export const postsRouter = () => {
 
   router.put('/:id/like', async (req: Request, res: Response) => {
     await postModel.like(req.user!.id, req.params.id);
-    res.notify('post-like', { post: { id: req.params.id } });
+    res.notifyFollowers('post-like', { post: { id: req.params.id } });
     res.json({ ok: true });
   });
 
   router.put('/:id/unlike', async (req: Request, res: Response) => {
     await postModel.unlike(req.user!.id, req.params.id);
-    res.notify('post-unlike', { post: { id: req.params.id } });
+    res.notifyFollowers('post-unlike', { post: { id: req.params.id } });
     res.json({ ok: true });
   });
 

@@ -31,7 +31,7 @@ subMap.on('delete_sub', sub => subscriber.punsubscribe(sub));
 wss.on('connection', async (ws) => {
   const follows = await findFollowsIDs(ws.user.id);
   const newSubs = follows
-    .map(x => `user:${x}/*`)
+    .map(x => `followers:${x}/*`)
     .filter(x => subMap.add(ws, x));
 
   if (newSubs.length) {

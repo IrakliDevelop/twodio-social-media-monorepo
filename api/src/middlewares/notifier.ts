@@ -5,15 +5,15 @@ import { container } from 'tsyringe';
 declare global {
   namespace Express {
     interface Response {
-      notify: (eventType: string, msg: any) => void;
+      notifyFollowers: (eventType: string, msg: any) => void;
     }
   }
 }
 
 export const notifier = () => (req: Request, res: Response, next: NextFunction) => {
   const publisher = container.resolve<RedisClient>('publisher');
-  res.notify = (eventType: string, msg: any) => {
-    publisher.publish(`user:${req.user!.id}/${eventType}`, JSON.stringify(msg));
+  res.notifyFollowers = (eventType: string, msg: any) => {
+    publisher.publish(`followers:${req.user!.id}/${eventType}`, JSON.stringify(msg));
   };
   next();
 };
