@@ -22,6 +22,9 @@ export default {
     env: env.ENV || 'dev',
     enableCors: !!env.ENABLE_CORS,
   },
+  mongodb: {
+    url: notNullEnv('MONGODB_URL'),
+  },
   db: {
     host: notNullEnv('DATABASE_HOST'),
     port: parseInt(env.DATABASE_PORT || '') || 9080,

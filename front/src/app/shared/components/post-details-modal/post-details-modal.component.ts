@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 import {IPost} from '@core/models';
-
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-post-details-modal',
@@ -10,12 +10,12 @@ import {IPost} from '@core/models';
   styleUrls: ['./post-details-modal.component.scss'],
 })
 export class PostDetailsModalComponent implements OnInit {
-  @Input() post: IPost;
+  @Input() post$: Observable<IPost>;
   constructor(
     public modalRef: NgbActiveModal
   ) { }
 
   ngOnInit() {
+    this.post$.subscribe(x => console.log('post details modal:', JSON.stringify(x)));
   }
-
 }

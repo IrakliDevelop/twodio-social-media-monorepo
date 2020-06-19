@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {finalize, takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
-import * as moment from 'moment';
+import {takeUntil, map, switchMap, tap, scan, throttle, filter, debounceTime} from 'rxjs/operators';
+import {Subject, BehaviorSubject, combineLatest, merge} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import * as R from 'ramda';
 
 import {PostsService, WsService} from '@core/services';
+import {mergePosts} from '@core/utils';
 import {IPost} from '@core/models';
 import {PostDetailsModalComponent} from '@shared/components';
 
@@ -15,18 +16,79 @@ import {PostDetailsModalComponent} from '@shared/components';
   styleUrls: ['./feed.component.scss'],
 })
 export class FeedComponent implements OnInit {
-  limit = 50;
-  offset = 0;
-  after: string;
+  @Input() onlyMine = false;
 
-  noPosts = false;
-  posts: IPost[];
+  allPostsLoading$ = new BehaviorSubject(false);
+  limit$ = new BehaviorSubject(50);
+  offset$ = new BehaviorSubject(0);
+
   post: IPost;
   postForm: FormGroup;
 
+  postSetLike$ = new Subject<{ postID: string, flag: boolean }>();
+
+  initialPosts$ = combineLatest(this.limit$, this.offset$).pipe(
+    debounceTime(500),
+    tap(() => { this.allPostsLoading$.next(true); }),
+    switchMap(([limit, offset]) => {
+      return this.onlyMine
+        ? this.postsService.getMyPosts(limit, offset)
+        : this.postsService.getFeed(limit, offset);
+    }),
+    tap(() => this.allPostsLoading$.next(false))
+  );
+
+  posts$ = merge(
+    this.initialPosts$.pipe(map(posts => ({
+      event: 'posts-fetch',
+      data: { posts },
+    }))),
+    this.wsService.event$
+  ).pipe(
+    filter(x =>
+      x.event.startsWith('post') ||
+      x.event.startsWith('comment')
+    ),
+    scan<any>((acc, { event, data }) => {
+      if (['posts-fetch', 'post-add'].includes(event)) {
+        return mergePosts(acc, data.post ? [data.post] : data.posts);
+      }
+
+      const post = acc.find(x =>
+        x.id === R.path(['post', 'id'], data) ||
+        x.id === R.path(['comment', 'parent', 'id'], data)
+      );
+
+      if (!post) { return acc; }
+      // Bellow this should be events that edit the existing post!
+      const postEditedAcc = (postOverrides: Partial<IPost>) => mergePosts(
+        acc,
+        [{ ...post, ...postOverrides }]
+      );
+
+      if (event === 'post-edit') {
+        return postEditedAcc(
+          // edit event doesn't send those omitted data. so those fields
+          // will have default values.
+          R.omit(['iLike', 'likeCount', 'childrenCount'], data.post)
+        );
+      } else if (['post-like', 'post-unlike'].includes(event)) {
+        const iLike = event === 'post-like' ? true : false;
+        if (post.iLike !== iLike) {
+          return postEditedAcc({ iLike, likeCount: post.likeCount + (iLike ? 1 : -1) });
+        }
+      } else if (event === 'comment-add') {
+        return postEditedAcc({
+          childrenCount: post.childrenCount + 1,
+          children: mergePosts(post.children || [], [data.comment]),
+        });
+      }
+      return acc;
+    }, [])
+  );
+
   unsubscribe$: Subject<void>;
   singlePostLoading: boolean;
-  allPostsLoading: boolean;
 
   constructor(
     private wsService: WsService,
@@ -37,30 +99,15 @@ export class FeedComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.wsService.event$.subscribe(({event, data}) => {
-      console.log({event, data});
-    });
     this.unsubscribe$ = new Subject<void>();
-    this.posts = [];
     this.postForm = this.fb.group({
       text: new FormControl('', [Validators.required]),
     });
-    this.loadPosts(this.limit, this.offset);
-  }
 
-  loadPosts(limit: number, offset: number, after?: string) {
-    this.allPostsLoading = true;
-    this.postsService.getFeed(limit, offset, after).pipe(
-      takeUntil(this.unsubscribe$),
-      finalize(() => this.allPostsLoading = false)
-    ).subscribe((res) => {
-      this.noPosts = !res;
-      // tslint:disable-next-line:variable-name
-      this.posts = res.map(post => {
-        post.created = moment(post.created).fromNow();
-        return post;
-      });
-    });
+    this.postSetLike$.pipe(
+      throttle(({postID, flag}) => this.postsService.setLike(postID, flag)),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
   }
 
   addNewPost(): any {
@@ -68,37 +115,25 @@ export class FeedComponent implements OnInit {
       return;
     }
     this.post = this.postForm.value;
-    console.log(this.post);
     this.singlePostLoading = true;
     this.postsService.createPost(this.post)
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        finalize(
-          () => this.singlePostLoading = false
-          )
-      ).subscribe(res => {
+      .subscribe(res => {
+        this.singlePostLoading = false;
         this.postForm.reset();
-        if (res.text && res.text === this.post.text) { // TODO: this is temporarily. use proper success checking
-          this.loadPosts(this.limit, this.offset);
-        }
     });
   }
+
   openPostDetails(post: IPost) {
     const modal = this.modalService.open(PostDetailsModalComponent, {size: 'lg', keyboard: false});
-    modal.componentInstance.post = post;
+    modal.componentInstance.post$ = this.posts$.pipe(
+      map(posts => posts.find(x => x.id === post.id))
+    );
   }
 
   onLike(postID: string): void {
-    this.postsService.likePost(postID).subscribe(res => {
-      console.log(res);
-      if (res.ok) { this.posts.find(post => post.id === postID).likeCount++; }
-    });
+    this.postSetLike$.next({ postID, flag: true });
   }
   onUnlike(postID: string): void {
-    this.postsService.unlikePost(postID).subscribe(res => {
-      console.log(res);
-      if (res.ok) { this.posts.find(post => post.id === postID).likeCount--; }
-    });
+    this.postSetLike$.next({ postID, flag: false });
   }
-
 }

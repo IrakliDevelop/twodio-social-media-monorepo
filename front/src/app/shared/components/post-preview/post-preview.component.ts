@@ -8,6 +8,7 @@ import { IPost } from '@core/models';
 })
 export class PostPreviewComponent implements OnInit {
   @Input() post: IPost;
+  @Output() commentsClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() like: EventEmitter<string> = new EventEmitter<string>();
   @Output() unlike: EventEmitter<string> = new EventEmitter<string>();
 
@@ -16,8 +17,11 @@ export class PostPreviewComponent implements OnInit {
   ngOnInit() {
   }
 
+  onPostCommentsClicked(): void {
+    this.commentsClick.emit();
+  }
+
   onPostLikeClicked(): void {
-    this.post.iLike = !this.post.iLike;
-    this.post.iLike ? this.like.emit(this.post.id) : this.unlike.emit(this.post.id);
+    !this.post.iLike ? this.like.emit(this.post.id) : this.unlike.emit(this.post.id);
   }
 }

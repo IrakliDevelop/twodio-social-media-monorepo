@@ -1,13 +1,25 @@
 <form [formGroup]="commentForm">
-  <ngx-loading [show]="loading"></ngx-loading>
+  <ngx-loading [show]="loading$ | async"></ngx-loading>
   <div style="" class="form-group mb-2">
     <textarea class="form-control mb-2" formControlName="comment" placeholder="add a comment"></textarea>
     <button class="btn btn-primary mb-2" (click)="addComment()">add</button>
   </div>
 </form>
 
-<!--- TODO: styling -->
-<h4>comments:</h4>
-<ul>
-  <li *ngFor="let comment of comments">{{comment?.text}}</li>
-</ul>
+<div *ngFor="let comment of comments$ | async" style="margin-bottom: 15px;">
+  <div class="user">
+    <figure>
+      <img class="avatar" src="/assets/images/default_icon.png" />
+    </figure>
+    <span class="displayName">{{comment.user.fullName}}</span>
+    <span class="username"> {{comment.user.username}}</span>
+    <span class="date"> {{comment.createdFromNow}}</span>
+  </div>
+    <span class="post-text">{{comment.text}}</span>
+    <!-- <div class="buttons">
+      <div> -->
+      <!-- <span [class.favYellow]="comment.iLike" style="cursor: pointer;" class='fa fa-star' (click)="onPostLikeClicked()"></span>
+      <span class="number">{{post.likeCount}}</span> -->
+    <!-- </div> -->
+    <!-- </div> -->
+</div>

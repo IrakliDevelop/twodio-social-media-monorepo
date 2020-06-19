@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Subject} from 'rxjs';
-import {finalize, takeUntil} from 'rxjs/operators';
+import {Subject, combineLatest, BehaviorSubject, merge} from 'rxjs';
+import {takeUntil, debounceTime, tap, filter, scan, map, switchMap} from 'rxjs/operators';
 
-import {PostsService} from '@core/services';
+import {PostsService, WsService} from '@core/services';
+import {mergePosts} from '@core/utils';
 import {IPost, IComment} from '@core/models';
 
 @Component({
@@ -13,14 +14,48 @@ import {IPost, IComment} from '@core/models';
 })
 export class PostCommentsComponent implements OnInit {
   @Input() post: IPost;
+
+  @Output() like: EventEmitter<string> = new EventEmitter<string>();
+  @Output() unlike: EventEmitter<string> = new EventEmitter<string>();
+
   commentForm: FormGroup;
   comment: string;
   comments: IComment[];
 
+  loading$ = new BehaviorSubject<boolean>(false);
+  limit$ = new BehaviorSubject<number>(20);
+  offset$ = new BehaviorSubject<number>(0);
+
+  initialComments$ = combineLatest(this.limit$, this.offset$).pipe(
+    debounceTime(500),
+    tap(() => { this.loading$.next(true); }),
+    switchMap(([first, offset]) =>
+      this.postsService.getComments(this.post.id, { first, offset })
+    ),
+    tap(() => this.loading$.next(false))
+  );
+
+  comments$ = merge(
+    this.initialComments$.pipe(map(comments => ({
+      event: 'comments-fetch',
+      data: { comments },
+    }))),
+    this.wsService.event$
+  ).pipe(
+    filter(x => x.event.startsWith('comment')),
+    scan<any>((acc, { event, data }) => {
+      if (['comments-fetch', 'comment-add'].includes(event)) {
+        return mergePosts(acc, data.comment ? [data.comment] : data.comments);
+      }
+
+      return acc;
+    }, [])
+  );
+
   unsubscribe$: Subject<void>;
-  loading: boolean;
   constructor(
     private postsService: PostsService,
+    private wsService: WsService,
     private fb: FormBuilder
   ) { }
 
@@ -29,7 +64,6 @@ export class PostCommentsComponent implements OnInit {
     this.commentForm = this.fb.group({
       comment: new FormControl('', [Validators.required]),
     });
-    this.loadComments();
   }
   addComment(): void {
     if (this.commentForm.invalid) {
@@ -41,24 +75,15 @@ export class PostCommentsComponent implements OnInit {
     if (!this.comment.replace(/\s/g, '').length) { // TODO: add check on spaces in validator patterns
       return;
     }
-    this.loading = true;
+    this.loading$.next(true);
     this.postsService.addComment(this.post.id, this.comment).pipe(
-      takeUntil(this.unsubscribe$),
-      finalize(() => this.loading = false)
+      takeUntil(this.unsubscribe$)
     ).subscribe( res => {
+      this.loading$.next(false);
       this.commentForm.reset();
-      console.log(res);
     });
   }
-  loadComments(): void {
-    this.loading = true;
-    this.postsService.getComments(this.post.id)
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        finalize(() => this.loading = false)
-      ).subscribe( res => {
-        this.comments = res;
-    });
+  onPostLikeClicked(comment: IPost): void {
+    comment.iLike ? this.like.emit(comment.id) : this.unlike.emit(comment.id);
   }
-
 }

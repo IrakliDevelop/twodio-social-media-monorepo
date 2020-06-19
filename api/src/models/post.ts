@@ -29,6 +29,7 @@ export const postProjections = {
     created: 1,
     updated: 1,
     likeCount: 'count(Post.likes)',
+    childrenCount: 'count(Post.children)',
   },
 };
 

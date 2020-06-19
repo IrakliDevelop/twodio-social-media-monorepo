@@ -37,6 +37,18 @@ export const userProjections = {
   },
 };
 
+/**
+ * @param userID uid or param name
+ * @param countUniqueID should be unique if used multiple times
+ */
+export function iFollowProjection(userID: string, countUniqueID:any = '') {
+  const varName = 'iFollowCount' + countUniqueID;
+  return {
+    iFollowCount: `${varName} as count(User.followers @filter(uid(${userID})))`,
+    iFollow: `math(${varName} > 0)`,
+  };
+}
+
 @injectable()
 export class UserModel extends BaseModel {
   constructor(

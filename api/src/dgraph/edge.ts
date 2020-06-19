@@ -26,7 +26,7 @@ export class Edge {
     this.type = capitalize(this.type);
   }
 
-  call<T>(this: T, func: (obj: T) => void) {
+  call<T, R>(this: T, func: (obj: T) => R) {
     return func(this);
   }
 

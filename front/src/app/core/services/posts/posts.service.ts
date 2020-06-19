@@ -1,7 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, combineLatest} from 'rxjs';
 import {environment} from '../../../../environments/environment';
+import * as moment from 'moment';
+import {IPost} from '@core/models';
+import {map} from 'rxjs/operators';
+import { UserService } from '../user/user.service';
 
 interface Args {
   first?: number;
@@ -21,34 +25,53 @@ export class PostsService {
   URL: string = environment.ApiUrl;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: UserService
   ) {
   }
 
-  getFeed(first?: number, offset?: number, after?: string): Observable<any> {
+  parsePost(post: IPost) {
+    return {
+      ...post,
+      iLike: post.iLike || false,
+      likeCount: post.likeCount || 0,
+      childrenCount: post.childrenCount || 0,
+      comm: post.likeCount || 0,
+      created: new Date(post.created),
+      updated: new Date(post.updated),
+      createdFromNow: moment(post.created).fromNow(),
+    };
+  }
+
+  getFeed(first?: number, offset?: number, after?: string): Observable<IPost[]> {
     return this.http.get<any>(`${this.URL}/api/feed`, {
       params: {
         first: first.toString(),
         offset: offset.toString(),
         after: after ? after : '',
       },
-    });
+    }).pipe(map(posts => posts.map(x => this.parsePost(x))));
   }
 
-  getMyPosts(first?: number, offset?: number, after?: string): Observable<any> {
-    return this.http.get<any>(`${this.URL}/api/posts`, {
+  getMyPosts(first?: number, offset?: number, after?: string): Observable<IPost[]> {
+    const posts$ = this.http.get<any>(`${this.URL}/api/posts`, {
       params: {
         first: first.toString(),
         offset: offset.toString(),
         after: after ? after : '',
       },
     });
+
+    return combineLatest(this.userService.me$, posts$)
+      .pipe(map(([user, posts]) => {
+        return posts.map(post => ({ ...this.parsePost(post), user }));
+      }));
   }
 
-  getComments(postID: string, args: Args = {}): Observable<any> {
+  getComments(postID: string, args: Args = {}): Observable<IPost[]> {
     return this.http.get<any>(`${this.URL}/api/posts/${postID}/comments`, {
       params: eachArgToString(args),
-    });
+    }).pipe(map(posts => posts.map(x => this.parsePost(x))));
   }
 
   createPost(post: any): Observable<any> {

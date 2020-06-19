@@ -3,7 +3,7 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<div class="modal-body">
+<div *ngIf="post$ | async; let post" class="modal-body">
   <app-post-preview [post]="post"></app-post-preview>
   <hr>
   <app-post-comments [post]="post"></app-post-comments>

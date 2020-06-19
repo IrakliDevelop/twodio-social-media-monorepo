@@ -5,7 +5,11 @@ export interface IPost {
   text?: string;
   iLike?: boolean;
   likeCount?: number;
-  created?: string;
+  childrenCount?: number;
+  created?: Date;
+  updated?: Date;
+  createdFromNow?: string;
+  children?: IPost[];
   user: IUser;
 }
 

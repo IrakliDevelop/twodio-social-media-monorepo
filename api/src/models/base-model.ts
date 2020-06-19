@@ -26,7 +26,7 @@ export class BaseModel {
   }
 
   fetchByIDQuery(
-    id: string,
+    id: string | string[],
     projection: Projection,
     opts: Partial<QueryOptions> = {}
   ): Query {
@@ -41,5 +41,14 @@ export class BaseModel {
   ): Promise<any> {
     return this.fetchByIDQuery(id, projection, opts)
       .call(this.runExtract(0, ...path));
+  }
+
+  async fetchByIDs(
+    ids: string[],
+    projection: Projection,
+    opts: Partial<QueryOptions> = {}
+  ): Promise<any> {
+    return this.fetchByIDQuery(ids, projection, opts)
+      .call(this.runExtract());
   }
 }

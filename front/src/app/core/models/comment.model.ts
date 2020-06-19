@@ -6,7 +6,7 @@ export interface IComment {
   ILikesCount?: number;
   likeCount?: number;
   text?: string;
-  created?: number;
-  updated?: number;
+  created?: Date;
+  updated?: Date;
   user?: IUser;
 }
