@@ -1,5 +1,5 @@
 <form [formGroup]="commentForm">
-  <ngx-loading [show]="loading"></ngx-loading>
+  <ngx-loading [show]="loading$ | async"></ngx-loading>
   <div style="" class="form-group mb-2">
     <textarea class="form-control mb-2" formControlName="comment" placeholder="add a comment"></textarea>
     <button class="btn btn-primary mb-2" (click)="addComment()">add</button>
@@ -9,5 +9,5 @@
 <!--- TODO: styling -->
 <h4>comments:</h4>
 <ul>
-  <li *ngFor="let comment of comments">{{comment?.text}}</li>
+  <li *ngFor="let comment of comments$ | async">{{comment?.text}}</li>
 </ul>

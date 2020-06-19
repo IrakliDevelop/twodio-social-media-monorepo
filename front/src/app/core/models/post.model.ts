@@ -9,6 +9,7 @@ export interface IPost {
   created?: Date;
   updated?: Date;
   createdFromNow?: string;
+  children?: IPost[];
   user: IUser;
 }
 

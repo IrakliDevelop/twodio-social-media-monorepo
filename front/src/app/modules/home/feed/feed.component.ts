@@ -6,16 +6,9 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as R from 'ramda';
 
 import {PostsService, WsService} from '@core/services';
+import {mergePosts} from '@core/utils';
 import {IPost} from '@core/models';
 import {PostDetailsModalComponent} from '@shared/components';
-
-function mergePosts(list1: IPost[], list2: IPost[] = []) {
-  return Array.from(
-    new Map(
-      list1.concat(list2).map(x => [x.id, x])
-    ).values()
-  ).sort((a: any, b: any) => b.created - a.created);
-}
 
 @Component({
   selector: 'app-feed',
@@ -52,32 +45,43 @@ export class FeedComponent implements OnInit {
     }))),
     this.wsService.event$
   ).pipe(
-    filter(x => x.event.startsWith('post')),
+    filter(x =>
+      x.event.startsWith('post') ||
+      x.event.startsWith('comment')
+    ),
     scan<any>((acc, { event, data }) => {
       if (['posts-fetch', 'post-add'].includes(event)) {
         return mergePosts(acc, data.post ? [data.post] : data.posts);
       }
 
-      const post = acc.find(x => x.id === (data.post && data.post.id));
+      const post = acc.find(x =>
+        x.id === R.path(['post', 'id'], data) ||
+        x.id === R.path(['comment', 'parent', 'id'], data)
+      );
 
       if (!post) { return acc; }
+      // Bellow this should be events that edit the existing post!
+      const postEditedAcc = (postOverrides: Partial<IPost>) => mergePosts(
+        acc,
+        [{ ...post, ...postOverrides }]
+      );
 
       if (event === 'post-edit') {
-        return mergePosts(acc, [{
-          ...post,
+        return postEditedAcc(
           // edit event doesn't send those omitted data. so those fields
           // will have default values.
-          ...R.omit(['iLike', 'likeCount', 'childrenCount'], data.post),
-        }]);
+          R.omit(['iLike', 'likeCount', 'childrenCount'], data.post)
+        );
       } else if (['post-like', 'post-unlike'].includes(event)) {
         const iLike = event === 'post-like' ? true : false;
         if (post.iLike !== iLike) {
-          return mergePosts(acc, [{
-            ...post,
-            iLike,
-            likeCount: post.likeCount + (iLike ? 1 : -1),
-          }]);
+          return postEditedAcc({ iLike, likeCount: post.likeCount + (iLike ? 1 : -1) });
         }
+      } else if (event === 'comment-add') {
+        return postEditedAcc({
+          childrenCount: post.childrenCount + 1,
+          children: mergePosts(post.children || [], [data.comment]),
+        });
       }
       return acc;
     }, [])
@@ -121,7 +125,9 @@ export class FeedComponent implements OnInit {
 
   openPostDetails(post: IPost) {
     const modal = this.modalService.open(PostDetailsModalComponent, {size: 'lg', keyboard: false});
-    modal.componentInstance.post = post;
+    modal.componentInstance.post$ = this.posts$.pipe(
+      map(posts => posts.find(x => x.id === post.id))
+    );
   }
 
   onLike(postID: string): void {

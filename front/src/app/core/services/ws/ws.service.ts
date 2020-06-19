@@ -26,6 +26,8 @@ export class WsService {
       event: evt.event,
       data: !evt.data ? {} : {
         ...evt.data,
+        comment: !evt.data.comment ? undefined :
+          this.postsService.parsePost(evt.data.comment),
         post: !evt.data.post ? undefined :
           this.postsService.parsePost(evt.data.post),
         posts: !evt.data.posts ? undefined :
