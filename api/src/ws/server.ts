@@ -32,6 +32,7 @@ wss.on('connection', async (ws) => {
   const follows = await findFollowsIDs(ws.user.id);
   const newSubs = follows
     .map(x => `followers:${x}/*`)
+    .concat([`to:*${ws.user.id}*/*`])
     .filter(x => subMap.add(ws, x));
 
   if (newSubs.length) {

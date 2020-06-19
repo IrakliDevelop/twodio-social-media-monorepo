@@ -58,6 +58,7 @@ export const chatRouter = () => {
     await chat.save();
 
     res.json({ ok: true });
+    res.notifyTo(users, 'message-send', chat.toJSON());
   });
 
   return router;
