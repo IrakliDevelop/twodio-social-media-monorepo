@@ -41,7 +41,7 @@ export const chatRouter = () => {
   router.get('/:user', async (req: Request, res: Response) => {
     const users = [req.user!.id, req.params.user];
     const messages = await ChatModel
-      .find({ users: { $in: users } })
+      .find({ users: { $all: users } })
       .sort({ created: -1 })
       .limit(parseInt(req.query.first) || 20)
       .skip(parseInt(req.query.offset) || 0);
