@@ -6,7 +6,7 @@ import {
   UserModel,
 } from '../models';
 import { Edge, Query, QueryVars } from '../dgraph';
-import { iLikeProjection } from '..//models/post';
+import { iLikeProjection } from '../models/post';
 
 export const feedRouter = () => {
   const userModel = container.resolve(UserModel);
